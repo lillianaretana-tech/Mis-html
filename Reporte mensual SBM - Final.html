@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBM Monthly Report - CBRE-DXC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400"><rect fill="%23667eea" width="1200" height="400"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        .header-upload {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .header-upload:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .header .period {
+            margin-top: 15px;
+            font-size: 1.1em;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+        }
+
+                    .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: #f8f9fa;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .metric-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #FF6B35;
+            margin: 10px 0;
+            min-height: 1.2em;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.4;
+            min-height: 2.8em;
+        }
+
+        .content-section {
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #FF6B35;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .collapsible {
+            background: #f1f3f5;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapsible:hover {
+            background: #e9ecef;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+
+        .collapsible-content.active {
+            max-height: 3000px;
+            padding: 20px;
+        }
+
+        .tasks-list {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .tasks-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #495057;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tasks-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #51cf66;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .chart-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            min-height: 300px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #868e96;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+            position: relative;
+        }
+
+        .chart-placeholder:hover {
+            background: #e9ecef;
+        }
+
+        .chart-placeholder.has-image {
+            border: none;
+            background: white;
+            padding: 0;
+            min-height: auto;
+        }
+
+        .chart-placeholder img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+
+        .chart-delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1em;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .chart-placeholder.has-image:hover .chart-delete-btn {
+            display: flex;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .photo-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .photo-card:hover {
+            transform: scale(1.05);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 200px;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #868e96;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 0.85em;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .photo-placeholder:hover {
+            background: #dee2e6;
+        }
+
+        .photo-card .caption {
+            padding: 15px;
+            text-align: center;
+            color: #495057;
+            font-size: 0.9em;
+            position: relative;
+        }
+
+        .sync-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #51cf66;
+            margin-left: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sync-indicator.active {
+            opacity: 1;
+        }
+
+        .compliment-box {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .compliment-box h3 {
+            margin-bottom: 10px;
+        }
+
+        .no-complaints {
+            background: linear-gradient(135deg, #4dabf7 0%, #228be6 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .good-catch-item {
+            background: #fff3bf;
+            border-left: 4px solid #ffd43b;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .good-catch-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .good-catch-photo-card {
+            position: relative;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .good-catch-photo-placeholder {
+            width: 100%;
+            height: 80px;
+            background: rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7em;
+            text-align: center;
+            transition: background 0.3s;
+            border: 1px dashed #ffd43b;
+        }
+
+        .good-catch-photo-placeholder:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .good-catch-photo-card img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        .good-catch-photo-delete {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.65em;
+            display: none;
+        }
+
+        .good-catch-photo-card:hover .good-catch-photo-delete {
+            display: block;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .carbon-neutral {
+            display: inline-block;
+            background: #51cf66;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        [contenteditable="true"] {
+            outline: 2px dashed transparent;
+            transition: outline 0.2s;
+        }
+
+        [contenteditable="true"]:hover {
+            outline: 2px dashed #FF6B35;
+            outline-offset: 2px;
+        }
+
+        [contenteditable="true"]:focus {
+            outline: 2px solid #FF6B35;
+            outline-offset: 2px;
+        }
+
+        .edit-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .save-indicator {
+            font-size: 0.75em;
+            color: #51cf66;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .save-indicator.saving {
+            color: #ffa500;
+            display: block;
+        }
+
+        .save-indicator.saved {
+            color: #51cf66;
+            display: block;
+        }
+
+        .btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #FF8C42;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8em;
+            background: #e74c3c;
+            border-radius: 3px;
+        }
+
+        .btn-small:hover {
+            background: #c0392b;
+        }
+
+        .btn-add {
+            background: #51cf66;
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+
+        .btn-add:hover {
+            background: #37b24d;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8em;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-card:hover .delete-btn,
+        .good-catch-item:hover .delete-btn,
+        .compliment-box:hover .delete-btn {
+            display: flex;
+        }
+
+        .task-delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.75em;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .tasks-list li:hover .task-delete {
+            opacity: 1;
+        }
+
+        .add-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        @media print {
+            @page {
+                margin: 0.5cm;
+            }
+            
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .edit-controls,
+            .delete-btn,
+            .task-delete,
+            .btn,
+            .btn-add,
+            .header-upload,
+            .delete-section-btn,
+            .add-section {
+                display: none !important;
+            }
+            
+            /* Ocultar mensajes de ayuda/tips */
+            div[style*="background: #e7f5ff"] {
+                display: none !important;
+            }
+            
+            [contenteditable="true"]:hover {
+                outline: none;
+            }
+            .collapsible-content {
+                max-height: none !important;
+                padding: 20px !important;
+            }
+            
+            /* Evitar cortes de página */
+            .header {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            
+            .metrics-grid {
+                page-break-before: avoid;
+                break-before: avoid;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                page-break-after: auto;
+                break-after: auto;
+            }
+            
+            .content-section {
+                page-break-before: auto;
+                break-before: auto;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .metric-card,
+            .compliment-box,
+            .good-catch-item,
+            .photo-card,
+            .chart-container,
+            .tasks-list li,
+            .event-item {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .section-title {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            
+            .collapsible {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            
+            h2, h3 {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+        }
+
+        .arrow {
+            transition: transform 0.3s;
+        }
+
+        .arrow.active {
+            transform: rotate(180deg);
+        }
+
+        .image-upload-zone {
+            border: 2px dashed #dee2e6;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .image-upload-zone:hover {
+            background: #f8f9fa;
+        }
+
+        .section-deletable {
+            position: relative;
+        }
+
+        .delete-section-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .section-deletable:hover .delete-section-btn {
+            opacity: 1;
+        }
+
+        .event-item {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .event-item h3 {
+            margin-bottom: 10px;
+        }
+
+        .event-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .event-photo-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .event-photo-placeholder {
+            width: 100%;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8em;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        .event-photo-placeholder:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .event-photo-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .event-photo-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.7em;
+            display: none;
+        }
+
+        .event-photo-card:hover .event-photo-delete {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-controls">
+        <button class="btn" onclick="window.print()">Exportar a PDF</button>
+        <button class="btn" onclick="manualSave()" style="background: #51cf66;">💾 Guardar Ahora</button>
+        <button class="btn" onclick="clearSavedData()" style="background: #e74c3c; font-size: 0.8em; padding: 5px 10px;">🗑️ Borrar Borrador</button>
+        <br>
+        <div class="save-indicator" id="saveIndicator">💾 Guardado automáticamente</div>
+        <small style="color: #666;">Autoguardado cada 30 seg</small>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header" id="mainHeader">
+            <input type="file" id="headerImageUpload" accept="image/*" style="display: none;" onchange="uploadHeaderImage(event)">
+            <div class="header-upload" onclick="document.getElementById('headerImageUpload').click()">
+                📷 Cambiar imagen de fondo
+            </div>
+            <h1 contenteditable="true">SBM Monthly Report</h1>
+            <div class="subtitle" contenteditable="true">CBRE-DXC</div>
+            <div class="period" contenteditable="true">Del 01 al 31 de Agosto del 2025</div>
+        </div>
+
+        <!-- Métricas Principales -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon" contenteditable="true">🛡️</div>
+                <div class="metric-value" contenteditable="true">2452</div>
+                <div class="metric-label" contenteditable="true">Días sin accidentes registrables</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" contenteditable="true">📋</div>
+                <div class="metric-value" contenteditable="true">4.75</div>
+                <div class="metric-label" contenteditable="true">Puntuación promedio auditorías internas</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" contenteditable="true">👎</div>
+                <div class="metric-value" contenteditable="true">0</div>
+                <div class="metric-label" contenteditable="true">Quejas recibidas durante el mes</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" contenteditable="true">👍</div>
+                <div class="metric-value" contenteditable="true">0</div>
+                <div class="metric-label" contenteditable="true">Felicitaciones recibidas durante el mes</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" contenteditable="true">⭐</div>
+                <div class="metric-value" contenteditable="true">5</div>
+                <div class="metric-label" contenteditable="true">Puntuación promedio encuesta al Cliente</div>
+            </div>
+        </div>
+
+        <!-- Resumen Mensual -->
+        <div class="content-section">
+            <h2 class="section-title" contenteditable="true">📝 Resumen Mensual</h2>
+            <div class="collapsible" onclick="toggleSection(this)">
+                <span>Tareas Especiales Realizadas</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-content active">
+                <ul class="tasks-list" id="tasksList">
+                    <li><span contenteditable="true">Desmanchado de alfombras</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Control de polvo a sillas en general</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Limpieza de sillas de producción</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Barrido de todas las áreas del edificio</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Limpieza de marcos de ventanas</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Desmanchado de pisos de baños</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Lavado de duchas</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Limpieza de cubículos</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Limpieza profunda en baños</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Limpieza de dispensadores</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Limpieza de ascensores</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Limpieza profunda de muebles del lobby</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                </ul>
+                <div class="add-section">
+                    <button class="btn btn-add" onclick="addTask()">+ Agregar Tarea</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Capacitaciones -->
+        <div class="content-section">
+            <h2 class="section-title" contenteditable="true">📚 Capacitaciones</h2>
+            <div class="collapsible" onclick="toggleSection(this)">
+                <span>Capacitaciones Realizadas</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-content active">
+                <ul class="tasks-list" id="trainingList">
+                    <li><span contenteditable="true">Uso correcto de EPP (Equipo de Protección Personal)</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Manejo seguro de productos químicos</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                    <li><span contenteditable="true">Prevención de riesgos laborales</span> <button class="task-delete" onclick="deleteTask(this)">✕</button></li>
+                </ul>
+                <div class="add-section">
+                    <button class="btn btn-add" onclick="addTraining()">+ Agregar Capacitación</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auditorías -->
+        <div class="content-section">
+            <h2 class="section-title" contenteditable="true">📊 Auditorías</h2>
+            <p contenteditable="true">SBM realizó un total de <strong>1 auditoría interna</strong> y <strong>1 auditoría en conjunto</strong> durante el mes de agosto.</p>
+            <div style="margin: 20px 0;">
+                <p contenteditable="true"><strong>Promedio auditoría interna:</strong> 4.80</p>
+                <p contenteditable="true"><strong>Promedio auditoría en conjunto:</strong> 4.87</p>
+            </div>
+            <div class="chart-container">
+                <div class="chart-placeholder" onclick="uploadChartImage(this)" onpaste="pasteChartImage(event, this)">
+                    <button class="chart-delete-btn" onclick="event.stopPropagation(); deleteChartImage(this)">✕</button>
+                    Haz clic para subir gráfico de auditorías o pega la imagen aquí (Ctrl+V)
+                </div>
+            </div>
+        </div>
+
+        <!-- Felicitaciones -->
+        <div class="content-section">
+            <h2 class="section-title" contenteditable="true">🎉 Felicitaciones</h2>
+            <div id="complimentsContainer">
+                <div class="compliment-box">
+                    <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                    <h3 contenteditable="true">Gioconda del Socorro Córdoba</h3>
+                    <p contenteditable="true">Al realizar limpieza y auditoría en el consultorio médico se recibió de la doctora reconocimiento por el trabajo de la funcionaria y su disposición a ayudar en el día a día.</p>
+                    <small contenteditable="true">08/11/2025</small>
+                </div>
+            </div>
+            <div class="add-section">
+                <button class="btn btn-add" onclick="addCompliment()">+ Agregar Felicitación</button>
+            </div>
+            <div class="chart-container">
+                <div class="chart-placeholder" onclick="uploadChartImage(this)" onpaste="pasteChartImage(event, this)">
+                    <button class="chart-delete-btn" onclick="event.stopPropagation(); deleteChartImage(this)">✕</button>
+                    Haz clic para subir gráfico de Felicitaciones o pega la imagen aquí (Ctrl+V)
+                </div>
+            </div>
+        </div>
+
+        <!-- Quejas -->
+        <div class="content-section">
+            <h2 class="section-title" contenteditable="true">📢 Quejas</h2>
+            <div class="no-complaints" contenteditable="true">
+                <p>🎊 ¡Excelente trabajo!</p>
+                <p>No se recibieron quejas durante el mes de agosto</p>
+            </div>
+            <div class="chart-container">
+                <div class="chart-placeholder" onclick="uploadChartImage(this)" onpaste="pasteChartImage(event, this)">
+                    <button class="chart-delete-btn" onclick="event.stopPropagation(); deleteChartImage(this)">✕</button>
+                    Haz clic para subir gráfico de Quejas o pega la imagen aquí (Ctrl+V)
+                </div>
+            </div>
+        </div>
+
+        <!-- Good Catch -->
+        <div class="content-section">
+            <h2 class="section-title" contenteditable="true">⚠️ Good Catch</h2>
+            <p contenteditable="true">SBM recibió un total de <strong>3 reportes</strong> de posibles peligros durante el mes de agosto.</p>
+            
+            <div id="goodCatchContainer">
+                <div class="good-catch-item">
+                    <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                    <strong contenteditable="true">1. Herramienta sin señalización</strong>
+                    <p contenteditable="true">Se encuentra herramienta sin señalización, esto provocaría un accidente por no tener la señalización indicada.</p>
+                    <div class="good-catch-photos">
+                        <div class="good-catch-photo-card">
+                            <button class="good-catch-photo-delete" onclick="deleteElement(this.parentElement)">✕</button>
+                            <div class="good-catch-photo-placeholder" onclick="uploadGoodCatchPhoto(this)" onpaste="pasteGoodCatchPhoto(event, this)">
+                                Foto
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-section" style="margin-top: 8px;">
+                        <button class="btn btn-add" onclick="addGoodCatchPhoto(this)" style="font-size: 0.7em; padding: 4px 8px;">+ Foto</button>
+                    </div>
+                </div>
+                
+                <div class="good-catch-item">
+                    <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                    <strong contenteditable="true">2. Escalera sin conos</strong>
+                    <p contenteditable="true">Se encuentra escalera sin conos, esto podría provocar un accidente al funcionario por no tener señalización.</p>
+                    <div class="good-catch-photos">
+                        <div class="good-catch-photo-card">
+                            <button class="good-catch-photo-delete" onclick="deleteElement(this.parentElement)">✕</button>
+                            <div class="good-catch-photo-placeholder" onclick="uploadGoodCatchPhoto(this)" onpaste="pasteGoodCatchPhoto(event, this)">
+                                Foto
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-section" style="margin-top: 8px;">
+                        <button class="btn btn-add" onclick="addGoodCatchPhoto(this)" style="font-size: 0.7em; padding: 4px 8px;">+ Foto</button>
+                    </div>
+                </div>
+                
+                <div class="good-catch-item">
+                    <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                    <strong contenteditable="true">3. Dispensador de alcohol vacío</strong>
+                    <p contenteditable="true">Se encuentra dispensador de alcohol sin alcohol y prácticamente sin uso debido a que no hay mucho personal en el site.</p>
+                    <div class="good-catch-photos">
+                        <div class="good-catch-photo-card">
+                            <button class="good-catch-photo-delete" onclick="deleteElement(this.parentElement)">✕</button>
+                            <div class="good-catch-photo-placeholder" onclick="uploadGoodCatchPhoto(this)" onpaste="pasteGoodCatchPhoto(event, this)">
+                                Foto
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-section" style="margin-top: 8px;">
+                        <button class="btn btn-add" onclick="addGoodCatchPhoto(this)" style="font-size: 0.7em; padding: 4px 8px;">+ Foto</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="add-section">
+                <button class="btn btn-add" onclick="addGoodCatch()">+ Agregar Good Catch</button>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-placeholder" onclick="uploadChartImage(this)" onpaste="pasteChartImage(event, this)">
+                    <button class="chart-delete-btn" onclick="event.stopPropagation(); deleteChartImage(this)">✕</button>
+                    Haz clic para subir gráfico de Good Catch o pega la imagen aquí (Ctrl+V)
+                </div>
+            </div>
+        </div>
+
+        <!-- ToDos -->
+        <div class="content-section section-deletable" id="todosSection">
+            <button class="delete-section-btn" onclick="deleteSection('todosSection')">🗑️ Eliminar esta sección</button>
+            <h2 class="section-title" contenteditable="true">📋 ToDos</h2>
+            <div class="collapsible" onclick="toggleSection(this)">
+                <span>Ver lista de pendientes</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-content active">
+                <div id="todosContainer">
+                    <div class="good-catch-item" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                        <strong contenteditable="true">1. Pendiente</strong>
+                        <p contenteditable="true">Descripción del pendiente o tarea a realizar...</p>
+                    </div>
+                </div>
+                <div class="add-section">
+                    <button class="btn btn-add" onclick="addTodo()">+ Agregar ToDo</button>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-placeholder" onclick="uploadChartImage(this)" onpaste="pasteChartImage(event, this)">
+                        <button class="chart-delete-btn" onclick="event.stopPropagation(); deleteChartImage(this)">✕</button>
+                        Haz clic para subir gráfico de ToDos o pega la imagen aquí (Ctrl+V)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fotos de Trabajos -->
+        <div class="content-section">
+            <h2 class="section-title" contenteditable="true">📸 Reporte Fotográfico</h2>
+            <div class="collapsible" onclick="toggleSection(this)">
+                <span>Ver galería de trabajos realizados</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-content active">
+                <div class="photos-grid" id="photosGrid">
+                    <div class="photo-card">
+                        <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                        <div class="photo-placeholder" onclick="uploadPhotoImage(this)" onpaste="pastePhotoImage(event, this)">
+                            Click o pega foto<br>Antes
+                        </div>
+                        <div class="caption" contenteditable="true" oninput="syncToTasksList(this)">Limpieza de bordes de ventanales</div>
+                    </div>
+                    <div class="photo-card">
+                        <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                        <div class="photo-placeholder" onclick="uploadPhotoImage(this)" onpaste="pastePhotoImage(event, this)">
+                            Click o pega foto<br>Después
+                        </div>
+                        <div class="caption" contenteditable="true" oninput="syncToTasksList(this)">Limpieza de bordes de ventanales</div>
+                    </div>
+                </div>
+                <div class="add-section">
+                    <button class="btn btn-add" onclick="addPhoto()">+ Agregar Foto Antes/Después</button>
+                    <button class="btn btn-add" onclick="addSinglePhoto()">+ Agregar Foto Individual</button>
+                    <button class="btn btn-add" onclick="syncAllPhotoCaptions()">🔄 Sincronizar Todas</button>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: #e7f5ff; border-radius: 8px; font-size: 0.85em; color: #1971c2;">
+                    💡 <strong>Tip:</strong> Las descripciones que escribas aquí se agregarán automáticamente a "Tareas Especiales Realizadas" mientras escribes. Si hay duplicados, se eliminarán automáticamente. Usa el botón "🔄 Sincronizar Todas" para actualizar la lista completa.
+                </div>
+            </div>
+        </div>
+
+        <!-- Eventos y Actividades de Team Building -->
+        <div class="content-section section-deletable" id="teamBuildingSection">
+            <button class="delete-section-btn" onclick="deleteSection('teamBuildingSection')">🗑️ Eliminar esta sección</button>
+            <h2 class="section-title" contenteditable="true">🎯 Eventos y Actividades de Team Building</h2>
+            <div class="collapsible" onclick="toggleSection(this)">
+                <span>Ver actividades del mes</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="collapsible-content active">
+                <div id="eventsContainer">
+                    <div class="event-item">
+                        <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                        <h3 contenteditable="true">Nombre del Evento</h3>
+                        <p contenteditable="true">Descripción de la actividad de team building realizada...</p>
+                        <small contenteditable="true">Fecha del evento</small>
+                        <div class="event-photos">
+                            <div class="event-photo-card">
+                                <button class="event-photo-delete" onclick="deleteElement(this.parentElement)">✕</button>
+                                <div class="event-photo-placeholder" onclick="uploadEventPhoto(this)" onpaste="pasteEventPhoto(event, this)">
+                                    Click o pega<br>foto
+                                </div>
+                            </div>
+                        </div>
+                        <div class="add-section" style="margin-top: 10px;">
+                            <button class="btn btn-add" onclick="addEventPhoto(this)" style="font-size: 0.75em; padding: 5px 10px;">+ Foto</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="add-section">
+                    <button class="btn btn-add" onclick="addEvent()">+ Agregar Evento</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <h3 contenteditable="true">SBM Confidential</h3>
+            <div class="carbon-neutral" contenteditable="true">
+                🌱 SBM una empresa declarada Carbono Neutro en sus emisiones de Alcance 1 y 2
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSection(element) {
+            const content = element.nextElementSibling;
+            const arrow = element.querySelector('.arrow');
+            
+            content.classList.toggle('active');
+            arrow.classList.toggle('active');
+        }
+
+        function addTask() {
+            const tasksList = document.getElementById('tasksList');
+            const newTask = document.createElement('li');
+            newTask.innerHTML = '<span contenteditable="true">Nueva tarea</span> <button class="task-delete" onclick="deleteTask(this)">✕</button>';
+            tasksList.appendChild(newTask);
+        }
+
+        function addTraining() {
+            const trainingList = document.getElementById('trainingList');
+            const newTraining = document.createElement('li');
+            newTraining.innerHTML = '<span contenteditable="true">Nueva capacitación</span> <button class="task-delete" onclick="deleteTask(this)">✕</button>';
+            trainingList.appendChild(newTraining);
+        }
+
+        function deleteTask(btn) {
+            if (confirm('¿Eliminar este elemento?')) {
+                btn.parentElement.remove();
+            }
+        }
+
+        function addCompliment() {
+            const container = document.getElementById('complimentsContainer');
+            const newCompliment = document.createElement('div');
+            newCompliment.className = 'compliment-box';
+            newCompliment.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                <h3 contenteditable="true">Nombre del empleado</h3>
+                <p contenteditable="true">Descripción de la felicitación...</p>
+                <small contenteditable="true">Fecha</small>
+            `;
+            container.appendChild(newCompliment);
+        }
+
+        function addGoodCatch() {
+            const container = document.getElementById('goodCatchContainer');
+            const count = container.children.length + 1;
+            const newItem = document.createElement('div');
+            newItem.className = 'good-catch-item';
+            newItem.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                <strong contenteditable="true">${count}. Título del reporte</strong>
+                <p contenteditable="true">Descripción del posible peligro...</p>
+                <div class="good-catch-photos">
+                    <div class="good-catch-photo-card">
+                        <button class="good-catch-photo-delete" onclick="deleteElement(this.parentElement)">✕</button>
+                        <div class="good-catch-photo-placeholder" onclick="uploadGoodCatchPhoto(this)" onpaste="pasteGoodCatchPhoto(event, this)">
+                            Foto
+                        </div>
+                    </div>
+                </div>
+                <div class="add-section" style="margin-top: 8px;">
+                    <button class="btn btn-add" onclick="addGoodCatchPhoto(this)" style="font-size: 0.7em; padding: 4px 8px;">+ Foto</button>
+                </div>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function uploadGoodCatchPhoto(element) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        element.replaceWith(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        function pasteGoodCatchPhoto(event, element) {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    event.preventDefault();
+                    const blob = items[i].getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        element.replaceWith(img);
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        }
+
+        function addGoodCatchPhoto(button) {
+            const goodCatchItem = button.closest('.good-catch-item');
+            const photosContainer = goodCatchItem.querySelector('.good-catch-photos');
+            const newPhotoCard = document.createElement('div');
+            newPhotoCard.className = 'good-catch-photo-card';
+            newPhotoCard.innerHTML = `
+                <button class="good-catch-photo-delete" onclick="deleteElement(this.parentElement)">✕</button>
+                <div class="good-catch-photo-placeholder" onclick="uploadGoodCatchPhoto(this)" onpaste="pasteGoodCatchPhoto(event, this)">
+                    Foto
+                </div>
+            `;
+            photosContainer.appendChild(newPhotoCard);
+        }
+
+        function addTodo() {
+            const container = document.getElementById('todosContainer');
+            const count = container.children.length + 1;
+            const newItem = document.createElement('div');
+            newItem.className = 'good-catch-item';
+            newItem.style.background = '#fff3cd';
+            newItem.style.borderLeftColor = '#ffc107';
+            newItem.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                <strong contenteditable="true">${count}. Pendiente</strong>
+                <p contenteditable="true">Descripción del pendiente o tarea a realizar...</p>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function addPhoto() {
+            const grid = document.getElementById('photosGrid');
+            const newPhoto = document.createElement('div');
+            newPhoto.className = 'photo-card';
+            newPhoto.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                <div style="height: 200px; background: #e9ecef; display: flex; align-items: center; justify-content: center; color: #868e96;">
+                    Nueva foto
+                </div>
+                <div class="caption" contenteditable="true">Descripción de la foto</div>
+            `;
+            grid.appendChild(newPhoto);
+        }
+
+        function deleteElement(btn) {
+            if (confirm('¿Eliminar este elemento?')) {
+                btn.parentElement.remove();
+            }
+        }
+
+        function uploadHeaderImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const header = document.getElementById('mainHeader');
+                    header.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${e.target.result}')`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function uploadChartImage(element) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        element.innerHTML = `
+                            <button class="chart-delete-btn" onclick="event.stopPropagation(); deleteChartImage(this)">✕</button>
+                            <img src="${event.target.result}" alt="Gráfico">
+                        `;
+                        element.classList.add('has-image');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        function pasteChartImage(event, element) {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    event.preventDefault();
+                    const blob = items[i].getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        element.innerHTML = `
+                            <button class="chart-delete-btn" onclick="event.stopPropagation(); deleteChartImage(this)">✕</button>
+                            <img src="${e.target.result}" alt="Gráfico">
+                        `;
+                        element.classList.add('has-image');
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        }
+
+        function deleteChartImage(btn) {
+            if (confirm('¿Eliminar esta imagen?')) {
+                const placeholder = btn.parentElement;
+                placeholder.innerHTML = 'Haz clic para subir gráfico o pega la imagen aquí (Ctrl+V)';
+                placeholder.classList.remove('has-image');
+                placeholder.onclick = function() { uploadChartImage(this); };
+                placeholder.onpaste = function(e) { pasteChartImage(e, this); };
+            }
+        }
+
+        function addEvent() {
+            const container = document.getElementById('eventsContainer');
+            const newEvent = document.createElement('div');
+            newEvent.className = 'event-item';
+            newEvent.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                <h3 contenteditable="true">Nombre del Evento</h3>
+                <p contenteditable="true">Descripción de la actividad de team building realizada...</p>
+                <small contenteditable="true">Fecha del evento</small>
+                <div class="event-photos">
+                    <div class="event-photo-card">
+                        <button class="event-photo-delete" onclick="deleteElement(this.parentElement)">✕</button>
+                        <div class="event-photo-placeholder" onclick="uploadEventPhoto(this)" onpaste="pasteEventPhoto(event, this)">
+                            Click o pega<br>foto
+                        </div>
+                    </div>
+                </div>
+                <div class="add-section" style="margin-top: 10px;">
+                    <button class="btn btn-add" onclick="addEventPhoto(this)" style="font-size: 0.75em; padding: 5px 10px;">+ Foto</button>
+                </div>
+            `;
+            container.appendChild(newEvent);
+        }
+
+        function deleteSection(sectionId) {
+            if (confirm('¿Eliminar toda esta sección? Esta acción no se puede deshacer.')) {
+                document.getElementById(sectionId).remove();
+            }
+        }
+
+        // Funciones para fotos de la galería principal
+        function uploadPhotoImage(element) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        element.replaceWith(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        function pastePhotoImage(event, element) {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    event.preventDefault();
+                    const blob = items[i].getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        element.replaceWith(img);
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        }
+
+        function addPhoto() {
+            const grid = document.getElementById('photosGrid');
+            // Agregar dos fotos (Antes y Después)
+            const photoAntes = document.createElement('div');
+            photoAntes.className = 'photo-card';
+            photoAntes.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                <div class="photo-placeholder" onclick="uploadPhotoImage(this)" onpaste="pastePhotoImage(event, this)">
+                    Click o pega foto<br>Antes
+                </div>
+                <div class="caption" contenteditable="true" oninput="syncToTasksList(this)">Descripción - Antes</div>
+            `;
+            
+            const photoDespues = document.createElement('div');
+            photoDespues.className = 'photo-card';
+            photoDespues.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                <div class="photo-placeholder" onclick="uploadPhotoImage(this)" onpaste="pastePhotoImage(event, this)">
+                    Click o pega foto<br>Después
+                </div>
+                <div class="caption" contenteditable="true" oninput="syncToTasksList(this)">Descripción - Después</div>
+            `;
+            
+            grid.appendChild(photoAntes);
+            grid.appendChild(photoDespues);
+        }
+
+        function addSinglePhoto() {
+            const grid = document.getElementById('photosGrid');
+            const newPhoto = document.createElement('div');
+            newPhoto.className = 'photo-card';
+            newPhoto.innerHTML = `
+                <button class="delete-btn" onclick="deleteElement(this)">✕</button>
+                <div class="photo-placeholder" onclick="uploadPhotoImage(this)" onpaste="pastePhotoImage(event, this)">
+                    Click o pega foto<br>Proceso
+                </div>
+                <div class="caption" contenteditable="true" oninput="syncToTasksList(this)">Descripción</div>
+            `;
+            grid.appendChild(newPhoto);
+        }
+
+        let syncTimeout = null;
+        function syncToTasksList(captionElement) {
+            // Usar un timeout para no agregar mientras el usuario está escribiendo
+            clearTimeout(syncTimeout);
+            syncTimeout = setTimeout(() => {
+                const description = captionElement.textContent.trim();
+                
+                // Ignorar descripciones vacías o muy cortas o que sean placeholders
+                if (!description || description.length < 8 || 
+                    description.toLowerCase().includes('descripción') || 
+                    description.toLowerCase().includes('limpieza de bordes')) {
+                    return;
+                }
+
+                const tasksList = document.getElementById('tasksList');
+                
+                // Verificar si la descripción ya existe en la lista
+                const existingTasks = Array.from(tasksList.querySelectorAll('li span[contenteditable="true"]'));
+                const exists = existingTasks.some(task => 
+                    task.textContent.trim().toLowerCase() === description.toLowerCase()
+                );
+
+                // Si no existe, agregar a la lista
+                if (!exists) {
+                    const newTask = document.createElement('li');
+                    newTask.innerHTML = `<span contenteditable="true">${description}</span> <button class="task-delete" onclick="deleteTask(this)">✕</button>`;
+                    tasksList.appendChild(newTask);
+                    
+                    // Mostrar indicador visual temporal
+                    captionElement.style.background = '#d3f9d8';
+                    setTimeout(() => {
+                        captionElement.style.background = '';
+                    }, 800);
+                }
+            }, 1500); // Esperar 1.5 segundos después de que deje de escribir
+        }
+
+        function syncAllPhotoCaptions() {
+            const tasksList = document.getElementById('tasksList');
+            const allCaptions = document.querySelectorAll('.photo-card .caption[contenteditable="true"]');
+            
+            // Obtener todas las descripciones únicas
+            const descriptions = new Set();
+            allCaptions.forEach(caption => {
+                const text = caption.textContent.trim();
+                if (text && text.length >= 8 && 
+                    !text.toLowerCase().includes('descripción') &&
+                    !text.toLowerCase().includes('limpieza de bordes')) {
+                    descriptions.add(text);
+                }
+            });
+
+            // Obtener tareas existentes
+            const existingTasks = Array.from(tasksList.querySelectorAll('li span[contenteditable="true"]'));
+            const existingTexts = new Set(existingTasks.map(task => task.textContent.trim().toLowerCase()));
+
+            // Agregar solo las que no existen
+            let addedCount = 0;
+            descriptions.forEach(desc => {
+                if (!existingTexts.has(desc.toLowerCase())) {
+                    const newTask = document.createElement('li');
+                    newTask.innerHTML = `<span contenteditable="true">${desc}</span> <button class="task-delete" onclick="deleteTask(this)">✕</button>`;
+                    tasksList.appendChild(newTask);
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                alert(`Se agregaron ${addedCount} tarea(s) a la lista`);
+            } else {
+                alert('Todas las descripciones ya están en la lista de tareas');
+            }
+        }
+
+        // Funciones para fotos de eventos
+        function uploadEventPhoto(element) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        element.replaceWith(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        function pasteEventPhoto(event, element) {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    event.preventDefault();
+                    const blob = items[i].getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        element.replaceWith(img);
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        }
+
+        function addEventPhoto(button) {
+            const eventItem = button.closest('.event-item');
+            const photosContainer = eventItem.querySelector('.event-photos');
+            const newPhotoCard = document.createElement('div');
+            newPhotoCard.className = 'event-photo-card';
+            newPhotoCard.innerHTML = `
+                <button class="event-photo-delete" onclick="deleteElement(this.parentElement)">✕</button>
+                <div class="event-photo-placeholder" onclick="uploadEventPhoto(this)" onpaste="pasteEventPhoto(event, this)">
+                    Click o pega<br>foto
+                </div>
+            `;
+            photosContainer.appendChild(newPhotoCard);
+        }
+
+        // Sistema de Autoguardado
+        function autoSave() {
+            try {
+                const container = document.querySelector('.container');
+                const content = container.innerHTML;
+                localStorage.setItem('sbm_report_autosave', content);
+                localStorage.setItem('sbm_report_autosave_date', new Date().toISOString());
+                
+                const indicator = document.getElementById('saveIndicator');
+                indicator.textContent = '💾 Guardado ' + new Date().toLocaleTimeString();
+                indicator.className = 'save-indicator saved';
+                
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 3000);
+            } catch (e) {
+                console.error('Error al guardar:', e);
+            }
+        }
+
+        function manualSave() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.textContent = '💾 Guardando...';
+            indicator.className = 'save-indicator saving';
+            
+            autoSave();
+            
+            alert('✅ Reporte guardado exitosamente');
+        }
+
+        function loadSavedData() {
+            try {
+                const savedContent = localStorage.getItem('sbm_report_autosave');
+                const savedDate = localStorage.getItem('sbm_report_autosave_date');
+                
+                if (savedContent && savedDate) {
+                    const date = new Date(savedDate);
+                    const timeAgo = Math.round((new Date() - date) / 1000 / 60); // minutos
+                    
+                    let message = `Se encontró un borrador guardado hace ${timeAgo} minuto(s).\n\n¿Deseas recuperarlo?`;
+                    
+                    if (confirm(message)) {
+                        const container = document.querySelector('.container');
+                        container.innerHTML = savedContent;
+                        alert('✅ Borrador recuperado exitosamente');
+                    }
+                }
+            } catch (e) {
+                console.error('Error al cargar datos guardados:', e);
+            }
+        }
+
+        function clearSavedData() {
+            if (confirm('¿Estás seguro de que deseas eliminar el borrador guardado?')) {
+                localStorage.removeItem('sbm_report_autosave');
+                localStorage.removeItem('sbm_report_autosave_date');
+                alert('✅ Borrador eliminado');
+            }
+        }
+
+        // Iniciar autoguardado cada 30 segundos
+        setInterval(autoSave, 30000);
+
+        // Cargar datos guardados al iniciar (esperar a que cargue la página)
+        window.addEventListener('load', function() {
+            setTimeout(loadSavedData, 500);
+        });
+
+        // Guardar antes de cerrar la página
+        window.addEventListener('beforeunload', function() {
+            autoSave();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Reciclaje - Registro Múltiple</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            background: #10b981;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .header-text h1 {
+            color: #047857;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header-text p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .responsable-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .responsable-section label {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+        }
+
+        .responsable-section input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .responsable-section input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .registro-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .registro-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .registro-header h2 {
+            color: #374151;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-eliminar {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-eliminar:hover {
+            background: #dc2626;
+        }
+
+        .fecha-section {
+            margin-bottom: 20px;
+        }
+
+        .fecha-section label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .fecha-section input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .fecha-section input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .pesos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .peso-item {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .peso-item.basura { background: #fee2e2; }
+        .peso-item.coprocesamiento { background: #fef3c7; }
+        .peso-item.plastico { background: #e0e7ff; }
+        .peso-item.papel { background: #dbeafe; }
+        .peso-item.toallas { background: #fce7f3; }
+        .peso-item.carton { background: #fed7aa; }
+        .peso-item.aluminio { background: #e5e7eb; }
+        .peso-item.tetrabrick { background: #ddd6fe; }
+        .peso-item.vidrio { background: #cffafe; }
+        .peso-item.otros { background: #d1fae5; }
+        .peso-item.total { background: #d1fae5; border: 2px solid #10b981; }
+
+        .peso-item label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .peso-item.basura label { color: #991b1b; }
+        .peso-item.coprocesamiento label { color: #92400e; }
+        .peso-item.plastico label { color: #3730a3; }
+        .peso-item.papel label { color: #1e40af; }
+        .peso-item.toallas label { color: #9f1239; }
+        .peso-item.carton label { color: #9a3412; }
+        .peso-item.aluminio label { color: #374151; }
+        .peso-item.tetrabrick label { color: #5b21b6; }
+        .peso-item.vidrio label { color: #164e63; }
+        .peso-item.otros label { color: #065f46; }
+
+        .peso-item input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .peso-item input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .total-display {
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .total-display .label {
+            font-size: 12px;
+            color: #065f46;
+            margin-bottom: 5px;
+        }
+
+        .total-display .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #047857;
+        }
+
+        .observaciones-section {
+            margin-top: 15px;
+        }
+
+        .observaciones-section label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .observaciones-section textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .observaciones-section textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .botones-accion {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-agregar {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-agregar:hover {
+            background: #059669;
+        }
+
+        .btn-exportar {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-exportar:hover {
+            background: #2563eb;
+        }
+
+        .btn-limpiar {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-limpiar:hover {
+            background: #4b5563;
+        }
+
+        .instrucciones {
+            background: #dbeafe;
+            border: 2px solid #93c5fd;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .instrucciones h3 {
+            color: #1e40af;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .instrucciones ol {
+            color: #1e3a8a;
+            padding-left: 20px;
+        }
+
+        .instrucciones li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .pesos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">♻️</div>
+            <div class="header-text">
+                <h1>Control de Reciclaje</h1>
+                <p>Registro múltiple de materiales reciclables</p>
+            </div>
+        </div>
+
+        <!-- Responsable -->
+        <div class="responsable-section">
+            <label>👤 Responsable de los registros</label>
+            <input type="text" id="responsable" placeholder="Nombre de quien registra">
+        </div>
+
+        <!-- Registros -->
+        <div id="registros-container"></div>
+
+        <!-- Botones de acción -->
+        <div class="botones-accion">
+            <button class="btn btn-agregar" onclick="agregarRegistro()">
+                ➕ Agregar Otro Registro
+            </button>
+            <button class="btn btn-exportar" onclick="exportarCSV()">
+                💾 Exportar CSV
+            </button>
+            <button class="btn btn-limpiar" onclick="limpiarTodo()">
+                🗑️ Limpiar Todo
+            </button>
+        </div>
+
+        <!-- Instrucciones -->
+        <div class="instrucciones">
+            <h3>📌 Instrucciones de uso:</h3>
+            <ol>
+                <li>Ingresa el nombre del responsable arriba</li>
+                <li>Completa cada registro con los pesos en kilogramos</li>
+                <li>Usa <strong>"Agregar Otro Registro"</strong> para registrar más pesajes</li>
+                <li>Cuando termines, haz clic en <strong>"Exportar CSV"</strong></li>
+                <li>Luego abre el CSV con Excel y copia/pega a Google Sheets</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let registros = [];
+        let contadorId = 1;
+
+        // Inicializar con un registro
+        function inicializar() {
+            agregarRegistro();
+        }
+
+        function agregarRegistro() {
+            const id = contadorId++;
+            const hoy = new Date().toISOString().split('T')[0];
+            
+            registros.push({
+                id: id,
+                fecha: hoy,
+                basuraComun: '',
+                coprocesamiento: '',
+                plasticoGeneral: '',
+                papelGeneral: '',
+                toallasPapel: '',
+                carton: '',
+                latasAluminio: '',
+                tetrabrick: '',
+                vidrio: '',
+                otros: '',
+                observaciones: ''
+            });
+
+            renderizarRegistros();
+        }
+
+        function eliminarRegistro(id) {
+            if (registros.length > 1) {
+                registros = registros.filter(r => r.id !== id);
+                renderizarRegistros();
+            } else {
+                alert('Debe haber al menos un registro');
+            }
+        }
+
+        function actualizarRegistro(id, campo, valor) {
+            const registro = registros.find(r => r.id === id);
+            if (registro) {
+                registro[campo] = valor;
+                if (campo !== 'observaciones' && campo !== 'fecha') {
+                    actualizarTotal(id);
+                }
+            }
+        }
+
+        function calcularTotal(registro) {
+            const valores = [
+                parseFloat(registro.basuraComun) || 0,
+                parseFloat(registro.coprocesamiento) || 0,
+                parseFloat(registro.plasticoGeneral) || 0,
+                parseFloat(registro.papelGeneral) || 0,
+                parseFloat(registro.toallasPapel) || 0,
+                parseFloat(registro.carton) || 0,
+                parseFloat(registro.latasAluminio) || 0,
+                parseFloat(registro.tetrabrick) || 0,
+                parseFloat(registro.vidrio) || 0,
+                parseFloat(registro.otros) || 0
+            ];
+            return valores.reduce((sum, val) => sum + val, 0).toFixed(2);
+        }
+
+        function actualizarTotal(id) {
+            const registro = registros.find(r => r.id === id);
+            if (registro) {
+                const total = calcularTotal(registro);
+                const totalElement = document.getElementById(`total-${id}`);
+                if (totalElement) {
+                    totalElement.textContent = total + ' kg';
+                }
+            }
+        }
+
+        function renderizarRegistros() {
+            const container = document.getElementById('registros-container');
+            container.innerHTML = '';
+
+            registros.forEach((registro, index) => {
+                const card = document.createElement('div');
+                card.className = 'registro-card';
+                card.innerHTML = `
+                    <div class="registro-header">
+                        <h2>⚖️ Registro #${index + 1}</h2>
+                        ${registros.length > 1 ? `<button class="btn-eliminar" onclick="eliminarRegistro(${registro.id})">✕ Eliminar</button>` : ''}
+                    </div>
+
+                    <div class="fecha-section">
+                        <label>📅 Fecha</label>
+                        <input type="date" value="${registro.fecha}" 
+                               onchange="actualizarRegistro(${registro.id}, 'fecha', this.value)">
+                    </div>
+
+                    <div class="pesos-grid">
+                        <div class="peso-item basura">
+                            <label>🗑️ Basura común</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.basuraComun}"
+                                   oninput="actualizarRegistro(${registro.id}, 'basuraComun', this.value)">
+                        </div>
+
+                        <div class="peso-item coprocesamiento">
+                            <label>⚡ Co-procesamiento</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.coprocesamiento}"
+                                   oninput="actualizarRegistro(${registro.id}, 'coprocesamiento', this.value)">
+                        </div>
+
+                        <div class="peso-item plastico">
+                            <label>🍾 Plástico general</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.plasticoGeneral}"
+                                   oninput="actualizarRegistro(${registro.id}, 'plasticoGeneral', this.value)">
+                        </div>
+
+                        <div class="peso-item papel">
+                            <label>📄 Papel general</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.papelGeneral}"
+                                   oninput="actualizarRegistro(${registro.id}, 'papelGeneral', this.value)">
+                        </div>
+
+                        <div class="peso-item toallas">
+                            <label>🧻 Toallas de papel</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.toallasPapel}"
+                                   oninput="actualizarRegistro(${registro.id}, 'toallasPapel', this.value)">
+                        </div>
+
+                        <div class="peso-item carton">
+                            <label>📦 Cartón</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.carton}"
+                                   oninput="actualizarRegistro(${registro.id}, 'carton', this.value)">
+                        </div>
+
+                        <div class="peso-item aluminio">
+                            <label>🥫 Latas de aluminio</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.latasAluminio}"
+                                   oninput="actualizarRegistro(${registro.id}, 'latasAluminio', this.value)">
+                        </div>
+
+                        <div class="peso-item tetrabrick">
+                            <label>📦 Tetrabrick</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.tetrabrick}"
+                                   oninput="actualizarRegistro(${registro.id}, 'tetrabrick', this.value)">
+                        </div>
+
+                        <div class="peso-item vidrio">
+                            <label>🫙 Vidrio</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.vidrio}"
+                                   oninput="actualizarRegistro(${registro.id}, 'vidrio', this.value)">
+                        </div>
+
+                        <div class="peso-item otros">
+                            <label>♻️ Otros</label>
+                            <input type="number" step="0.01" placeholder="kg" value="${registro.otros}"
+                                   oninput="actualizarRegistro(${registro.id}, 'otros', this.value)">
+                        </div>
+
+                        <div class="peso-item total">
+                            <div class="total-display">
+                                <div class="label">Total</div>
+                                <div class="value" id="total-${registro.id}">${calcularTotal(registro)} kg</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="observaciones-section">
+                        <label>📝 Observaciones</label>
+                        <textarea rows="2" placeholder="Notas adicionales (opcional)" 
+                                  oninput="actualizarRegistro(${registro.id}, 'observaciones', this.value)">${registro.observaciones}</textarea>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function exportarCSV() {
+            const responsable = document.getElementById('responsable').value.trim();
+            
+            if (!responsable) {
+                alert('Por favor ingresa el nombre del responsable');
+                return;
+            }
+
+            const registrosValidos = registros.filter(r => 
+                r.fecha && (
+                    r.basuraComun || r.coprocesamiento || r.plasticoGeneral || 
+                    r.papelGeneral || r.toallasPapel || r.carton || 
+                    r.latasAluminio || r.tetrabrick || r.vidrio || r.otros
+                )
+            );
+
+            if (registrosValidos.length === 0) {
+                alert('Agrega al menos un registro con datos de peso');
+                return;
+            }
+
+            let csv = 'Fecha,Responsable,Basura comun (kg),Co-procesamiento (kg),Plastico general (kg),Papel general (kg),Toallas de papel (kg),Carton (kg),Latas de aluminio (kg),Tetrabrick (kg),Vidrio (kg),Otros (kg),Total (kg),Observaciones\n';
+            
+            registrosValidos.forEach(r => {
+                const fila = [
+                    r.fecha,
+                    responsable,
+                    r.basuraComun || '0',
+                    r.coprocesamiento || '0',
+                    r.plasticoGeneral || '0',
+                    r.papelGeneral || '0',
+                    r.toallasPapel || '0',
+                    r.carton || '0',
+                    r.latasAluminio || '0',
+                    r.tetrabrick || '0',
+                    r.vidrio || '0',
+                    r.otros || '0',
+                    calcularTotal(r),
+                    r.observaciones || ''
+                ];
+                csv += fila.join(',') + '\n';
+            });
+
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reciclaje-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+
+            alert(`✅ ${registrosValidos.length} registro(s) exportado(s) exitosamente.\n\nAhora abre el CSV con Excel y copia/pega a Google Sheets.`);
+        }
+
+        function limpiarTodo() {
+            if (confirm('¿Seguro que quieres limpiar todos los registros?')) {
+                document.getElementById('responsable').value = '';
+                registros = [];
+                contadorId = 1;
+                agregarRegistro();
+            }
+        }
+
+        // Inicializar al cargar la página
+        window.onload = inicializar;
+    </script>
+</body>
+</html>

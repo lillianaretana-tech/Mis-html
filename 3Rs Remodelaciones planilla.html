@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planilla de Construcción</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffa500 0%, #87ceeb 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-descargar {
+            background: #22c55e;
+            color: white;
+        }
+        
+        .btn-descargar:hover {
+            background: #16a34a;
+        }
+        
+        .btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .panel h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-agregar {
+            width: 100%;
+            background: #22c55e;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .btn-agregar:hover {
+            background: #16a34a;
+        }
+        
+        .workers-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .worker-item {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .worker-item:hover {
+            background: #e5e7eb;
+        }
+        
+        .worker-item.selected {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .section {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .section.azul {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .section.amarillo {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .section.rojo {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .section.morado {
+            background: #f5f3ff;
+            border-left: 4px solid #a855f7;
+        }
+        
+        .dias-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .btn-dia {
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            font-size: 24px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-dia-plus {
+            background: #22c55e;
+        }
+        
+        .dias-numero {
+            font-size: 36px;
+            font-weight: bold;
+            color: #3b82f6;
+            width: 80px;
+            text-align: center;
+        }
+        
+        .input-add {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .input-add input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .input-add button {
+            padding: 10px 20px;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .total-pagar {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .total-pagar h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .total-pagar .monto {
+            font-size: 48px;
+            font-weight: bold;
+        }
+        
+        .vacio {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 18px;
+        }
+        
+        .mensaje {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid;
+        }
+        
+        .mensaje.error {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+        
+        .mensaje.exito {
+            background: #f0fdf4;
+            border-color: #22c55e;
+            color: #166534;
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-buttons {
+                margin-top: 15px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📋 Planilla de Construcción</h1>
+                <p>Gestión fácil de pagos para el equipo</p>
+            </div>
+            <div class="header-buttons">
+                <button class="btn btn-descargar" id="btnDescargar">📥 Descargar</button>
+            </div>
+        </div>
+        
+        <div class="main-grid">
+            <!-- Panel Izquierdo -->
+            <div>
+                <div class="panel">
+                    <h2>Nuevo Trabajador</h2>
+                    <div class="form-group">
+                        <label>Nombre del trabajador</label>
+                        <input type="text" id="inputNombre" placeholder="Ej: Juan">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor por día</label>
+                        <input type="number" id="inputValorDia" placeholder="Ej: 15000">
+                    </div>
+                    <button class="btn-agregar" id="btnAgregar">+ Agregar</button>
+                </div>
+                
+                <div class="panel" style="margin-top: 20px;">
+                    <h2>Trabajadores</h2>
+                    <div class="workers-list" id="workersList"></div>
+                </div>
+            </div>
+            
+            <!-- Panel Derecho -->
+            <div>
+                <div class="panel" id="detallesPanel">
+                    <div class="vacio">Selecciona un trabajador para ver sus detalles</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let trabajadores = [];
+        let seleccionado = null;
+
+        const btnAgregar = document.getElementById('btnAgregar');
+        const inputNombre = document.getElementById('inputNombre');
+        const inputValorDia = document.getElementById('inputValorDia');
+        const workersList = document.getElementById('workersList');
+        const detallesPanel = document.getElementById('detallesPanel');
+        const btnDescargar = document.getElementById('btnDescargar');
+
+        btnAgregar.addEventListener('click', agregarTrabajador);
+        btnDescargar.addEventListener('click', descargarCSV);
+        inputNombre.addEventListener('keypress', (e) => e.key === 'Enter' && agregarTrabajador());
+        inputValorDia.addEventListener('keypress', (e) => e.key === 'Enter' && agregarTrabajador());
+
+        function agregarTrabajador() {
+            if (!inputNombre.value.trim() || !inputValorDia.value.trim()) {
+                alert('Completa los dos campos');
+                return;
+            }
+
+            const trabajador = {
+                id: Date.now(),
+                nombre: inputNombre.value,
+                valorDia: parseFloat(inputValorDia.value),
+                diasTrabajados: 0,
+                adelantos: 0,
+                descuentos: 0,
+                extras: 0
+            };
+
+            trabajadores.push(trabajador);
+            inputNombre.value = '';
+            inputValorDia.value = '';
+            inputNombre.focus();
+            
+            actualizarLista();
+        }
+
+        function actualizarLista() {
+            workersList.innerHTML = '';
+            
+            if (trabajadores.length === 0) {
+                workersList.innerHTML = '<div class="vacio">Sin trabajadores registrados</div>';
+                return;
+            }
+
+            trabajadores.forEach(trab => {
+                const div = document.createElement('div');
+                div.className = 'worker-item' + (seleccionado === trab.id ? ' selected' : '');
+                div.textContent = trab.nombre;
+                div.onclick = () => seleccionarTrabajador(trab.id);
+                workersList.appendChild(div);
+            });
+        }
+
+        function seleccionarTrabajador(id) {
+            seleccionado = id;
+            actualizarLista();
+            actualizarDetalles();
+        }
+
+        function actualizarDetalles() {
+            if (!seleccionado) {
+                detallesPanel.innerHTML = '<div class="vacio">Selecciona un trabajador</div>';
+                return;
+            }
+
+            const trab = trabajadores.find(t => t.id === seleccionado);
+            const total = calcularTotal(trab);
+
+            detallesPanel.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                    <h2 style="margin: 0;">${trab.nombre}</h2>
+                    <button onclick="eliminarTrabajador(${trab.id})" style="background: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">🗑️ Eliminar</button>
+                </div>
+
+                <div class="section azul">
+                    <h3>Días Trabajados</h3>
+                    <div class="dias-control">
+                        <button class="btn-dia" onclick="quitarDia(${trab.id})">−</button>
+                        <div class="dias-numero">${trab.diasTrabajados}</div>
+                        <button class="btn-dia btn-dia-plus" onclick="agregarDia(${trab.id})">+</button>
+                    </div>
+                    <p style="color: #666; margin-top: 10px;">Valor por día: <strong>$${trab.valorDia.toLocaleString()}</strong></p>
+                </div>
+
+                <div class="section amarillo">
+                    <h3>Adelantos (Pasajes, etc.)</h3>
+                    <div class="input-add">
+                        <input type="number" id="inputAdelanto" placeholder="Cantidad">
+                        <button onclick="agregarAdelanto(${trab.id})">Agregar</button>
+                    </div>
+                    <p style="color: #666;">Total: <strong>$${trab.adelantos.toLocaleString()}</strong></p>
+                </div>
+
+                <div class="section rojo">
+                    <h3>Descuentos (Comidas, etc.)</h3>
+                    <div class="input-add">
+                        <input type="number" id="inputDescuento" placeholder="Cantidad">
+                        <button onclick="agregarDescuento(${trab.id})">Agregar</button>
+                    </div>
+                    <p style="color: #666;">Total: <strong>$${trab.descuentos.toLocaleString()}</strong></p>
+                </div>
+
+                <div class="section morado">
+                    <h3>Pagos Extra</h3>
+                    <div class="input-add">
+                        <input type="number" id="inputExtra" placeholder="Cantidad">
+                        <button onclick="agregarExtra(${trab.id})">Agregar</button>
+                    </div>
+                    <p style="color: #666;">Total: <strong>$${trab.extras.toLocaleString()}</strong></p>
+                </div>
+
+                <div class="total-pagar">
+                    <h3>TOTAL A PAGAR</h3>
+                    <div class="monto">$${total.toLocaleString()}</div>
+                </div>
+            `;
+        }
+
+        function agregarDia(id) {
+            const trab = trabajadores.find(t => t.id === id);
+            if (trab) {
+                trab.diasTrabajados++;
+                actualizarDetalles();
+            }
+        }
+
+        function quitarDia(id) {
+            const trab = trabajadores.find(t => t.id === id);
+            if (trab && trab.diasTrabajados > 0) {
+                trab.diasTrabajados--;
+                actualizarDetalles();
+            }
+        }
+
+        function agregarAdelanto(id) {
+            const input = document.getElementById('inputAdelanto');
+            const trab = trabajadores.find(t => t.id === id);
+            if (trab && input.value) {
+                trab.adelantos += parseFloat(input.value);
+                input.value = '';
+                actualizarDetalles();
+            }
+        }
+
+        function agregarDescuento(id) {
+            const input = document.getElementById('inputDescuento');
+            const trab = trabajadores.find(t => t.id === id);
+            if (trab && input.value) {
+                trab.descuentos += parseFloat(input.value);
+                input.value = '';
+                actualizarDetalles();
+            }
+        }
+
+        function agregarExtra(id) {
+            const input = document.getElementById('inputExtra');
+            const trab = trabajadores.find(t => t.id === id);
+            if (trab && input.value) {
+                trab.extras += parseFloat(input.value);
+                input.value = '';
+                actualizarDetalles();
+            }
+        }
+
+        function eliminarTrabajador(id) {
+            if (confirm('¿Estás seguro?')) {
+                trabajadores = trabajadores.filter(t => t.id !== id);
+                seleccionado = null;
+                actualizarLista();
+                actualizarDetalles();
+            }
+        }
+
+        function calcularTotal(trab) {
+            return (trab.diasTrabajados * trab.valorDia) + trab.extras - trab.descuentos - trab.adelantos;
+        }
+
+        function descargarCSV() {
+            if (trabajadores.length === 0) {
+                alert('Agrega trabajadores primero');
+                return;
+            }
+
+            const headers = ['Nombre', 'Valor Día', 'Días Trabajados', 'Adelantos', 'Descuentos', 'Extras', 'Total a Pagar', 'Fecha'];
+            const fecha = new Date().toLocaleDateString('es-CR');
+            
+            let csv = headers.join(',') + '\n';
+            
+            trabajadores.forEach(t => {
+                const total = calcularTotal(t);
+                csv += `${t.nombre},${t.valorDia},${t.diasTrabajados},${t.adelantos},${t.descuentos},${t.extras},${total},${fecha}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `planilla_${fecha.replace(/\//g, '-')}.csv`;
+            a.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soluciones Automatizadas - Digitaliza tu Negocio</title>
+    <meta name="description" content="Automatiza los procesos de tu empresa, reduce costos y aumenta la eficiencia. Consultoría personalizada en Costa Rica.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #4a90e2;
+        }
+
+        .hero {
+            padding: 150px 0 100px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .section-alt {
+            background: #f8f9fa;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+            color: #2c3e50;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .problem-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .problem-card h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #4a90e2, #667eea);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            color: white;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: scale(1.05);
+        }
+
+        .service-card.featured {
+            border: 3px solid #4a90e2;
+            transform: scale(1.05);
+        }
+
+        .service-card h3 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .service-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .service-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .hubspot-iframe {
+            width: 100%;
+            min-height: 700px;
+            border: none;
+            border-radius: 10px;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .footer-content {
+            margin-bottom: 20px;
+        }
+
+        .contact-info {
+            margin: 20px 0;
+            font-size: 16px;
+        }
+
+        .contact-info a {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            nav ul {
+                gap: 15px;
+                font-size: 14px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .hubspot-iframe {
+                min-height: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Soluciones Automatizadas</div>
+                <nav>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#problema">Problemas</a></li>
+                        <li><a href="#servicios">Servicios</a></li>
+                        <li><a href="#beneficios">Beneficios</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="container">
+            <h1>Automatiza los Procesos de tu Empresa</h1>
+            <p>Elimina tareas repetitivas, reduce costos operativos y aumenta la eficiencia de tu negocio con soluciones de automatización personalizadas</p>
+            <a href="#contacto" class="cta-button">Solicitar Consultoría Gratuita</a>
+        </div>
+    </section>
+
+    <section id="problema" class="section-alt">
+        <div class="container">
+            <h2>¿Tu Empresa Enfrenta Estos Desafíos?</h2>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h3>📄 Procesos Manuales</h3>
+                    <p>Demasiado tiempo perdido en tareas repetitivas que podrían automatizarse</p>
+                </div>
+                <div class="problem-card">
+                    <h3>⏰ Falta de Visibilidad</h3>
+                    <p>No tienes información en tiempo real sobre lo que está pasando en tu negocio</p>
+                </div>
+                <div class="problem-card">
+                    <h3>📊 Información Dispersa</h3>
+                    <p>Datos en diferentes sistemas sin poder consolidar ni analizar efectivamente</p>
+                </div>
+                <div class="problem-card">
+                    <h3>❌ Errores Frecuentes</h3>
+                    <p>Errores humanos que generan costos innecesarios y pérdida de tiempo</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicios">
+        <div class="container">
+            <h2>¿Cómo Puedo Ayudarte?</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>🔍 Consultoría Inicial</h3>
+                    <ul class="service-features">
+                        <li>✓ Análisis de procesos actuales</li>
+                        <li>✓ Identificación de oportunidades</li>
+                        <li>✓ Recomendaciones personalizadas</li>
+                        <li>✓ Plan de implementación</li>
+                    </ul>
+                    <p style="margin-top: 20px; color: #4a90e2; font-weight: bold;">Consultoría gratuita para nuevos clientes</p>
+                </div>
+                <div class="service-card featured">
+                    <h3>⚙️ Implementación</h3>
+                    <ul class="service-features">
+                        <li>✓ Desarrollo de soluciones a medida</li>
+                        <li>✓ Integración con sistemas existentes</li>
+                        <li>✓ Capacitación del personal</li>
+                        <li>✓ Pruebas y ajustes</li>
+                    </ul>
+                    <p style="margin-top: 20px; color: #4a90e2; font-weight: bold;">Precio según proyecto - Cotización personalizada</p>
+                </div>
+                <div class="service-card">
+                    <h3>🛠️ Soporte y Mantenimiento</h3>
+                    <ul class="service-features">
+                        <li>✓ Soporte técnico continuo</li>
+                        <li>✓ Actualizaciones y mejoras</li>
+                        <li>✓ Resolución de problemas</li>
+                        <li>✓ Optimización constante</li>
+                    </ul>
+                    <p style="margin-top: 20px; color: #4a90e2; font-weight: bold;">Disponible según necesidad del cliente</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="beneficios" class="section-alt">
+        <div class="container">
+            <h2>Beneficios de Automatizar</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <h3>Reduce Costos</h3>
+                    <p>Ahorra hasta 40% en costos operativos al eliminar tareas manuales</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Mayor Eficiencia</h3>
+                    <p>Procesos más rápidos y sin errores humanos</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📈</div>
+                    <h3>Mejor Control</h3>
+                    <p>Visibilidad total de tus operaciones en tiempo real</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Enfoque Estratégico</h3>
+                    <p>Tu equipo se concentra en lo que realmente importa</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="section-alt">
+        <div class="container">
+            <h2>Solicita tu Consultoría Gratuita</h2>
+            <p style="text-align: center; margin-bottom: 40px; font-size: 18px;">Cuéntame sobre tu negocio y te ayudaré a identificar las mejores oportunidades de automatización</p>
+            
+            <div class="form-container">
+                <iframe class="hubspot-iframe" 
+                        src="https://share.hsforms.com/2D-za-Ly8RL24gH91UnQJeQu39sg" 
+                        frameborder="0"
+                        scrolling="yes">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h3 style="margin-bottom: 20px;">Soluciones Automatizadas</h3>
+                <div class="contact-info">
+                    <p>📧 Email: <a href="mailto:iretana@yahoo.com">iretana@yahoo.com</a></p>
+                    <p>📱 WhatsApp: <a href="https://wa.me/50688035571" target="_blank">+506 8803-5571</a></p>
+                    <p>📍 Costa Rica</p>
+                </div>
+            </div>
+            <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">&copy; 2025 Soluciones Automatizadas. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

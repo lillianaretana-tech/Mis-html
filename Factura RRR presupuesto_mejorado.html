@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuesto Editable - RRR's Remodelaciones</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 10px;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px dashed #ccc;
+            position: relative;
+        }
+        
+        .logo-container:hover {
+            border-color: #8B4513;
+        }
+        
+        .logo-placeholder {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .logo-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .logo-input {
+            display: none;
+        }
+        
+        .company-info h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .company-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .presupuesto-title {
+            text-align: right;
+        }
+        
+        .presupuesto-title h2 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .presupuesto-title p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .editable {
+            background: transparent;
+            border: 1px solid transparent;
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            min-width: 100px;
+        }
+        
+        .editable:focus {
+            outline: none;
+            border-color: #fff;
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .editable-dark {
+            background: transparent;
+            border: 1px solid transparent;
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            min-width: 100px;
+        }
+        
+        .editable-dark:focus {
+            outline: none;
+            border-color: #8B4513;
+            background: #f8f8f8;
+        }
+        
+        .info-section {
+            padding: 30px;
+            border-bottom: 3px solid #8B4513;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h3 {
+            margin: 0 0 15px 0;
+            color: #8B4513;
+            font-size: 18px;
+            border-bottom: 2px solid #8B4513;
+            padding-bottom: 5px;
+        }
+        
+        .info-box p {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        
+        .project-description {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .project-description h3 {
+            margin: 0 0 15px 0;
+            color: #8B4513;
+        }
+        
+        .project-features {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .project-features li {
+            background: white;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-left: 4px solid #8B4513;
+            border-radius: 4px;
+        }
+        
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        
+        .details-table th {
+            background: #8B4513;
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .details-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .details-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .details-table tr:hover {
+            background: #f0f0f0;
+        }
+        
+        .amount {
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .total-section {
+            background: #f8f8f8;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+        }
+        
+        .total-final {
+            border-top: 3px solid #8B4513;
+            font-size: 20px;
+            font-weight: bold;
+            color: #8B4513;
+        }
+        
+        .conditions {
+            background: white;
+            padding: 30px;
+        }
+        
+        .conditions h3 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .conditions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .condition-box {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .condition-box h4 {
+            margin: 0 0 10px 0;
+            color: #8B4513;
+        }
+        
+        .condition-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .condition-box ul li {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+        
+        .footer {
+            background: #8B4513;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .btn {
+            background: #8B4513;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #A0522D;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .add-row-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        
+        .add-condition-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin: 8px 0;
+        }
+        
+        .add-condition-btn:hover {
+            background: #218838;
+        }
+        
+        .editable-condition-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .editable-condition-item {
+            margin: 5px 0;
+            line-height: 1.4;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .delete-condition {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        
+        .delete-condition:hover {
+            background: #c82333;
+        }
+        
+        .delete-row {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        .delete-row:hover {
+            background: #c82333;
+        }
+        
+        .editable-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .editable-list-item {
+            background: white;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-left: 4px solid #8B4513;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .editable-list-item .delete-item {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+        }
+        
+        .editable-list-item textarea {
+            width: 90%;
+            border: none;
+            background: transparent;
+            resize: vertical;
+            font-family: inherit;
+            font-size: inherit;
+            min-height: 20px;
+        }
+        
+        .editable-list-item textarea:focus {
+            outline: 1px solid #8B4513;
+            background: #f8f8f8;
+        }
+        
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+            .controls { display: none !important; }
+            .add-row-btn { display: none !important; }
+            .delete-row { display: none !important; }
+            .delete-item { display: none !important; }
+            .editable:focus { border: none !important; background: transparent !important; }
+            .editable-dark:focus { border: none !important; background: transparent !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn btn-secondary" onclick="toggleEditMode()">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+            </svg>
+            <span id="editModeText">Editar</span>
+        </button>
+        <button class="btn" onclick="window.print()">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1 1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+            </svg>
+            Imprimir
+        </button>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo-container" onclick="document.getElementById('logoInput').click()">
+                    <div class="logo-placeholder" id="logoPlaceholder">
+                        Hacer clic<br>para subir<br>logo
+                    </div>
+                    <img class="logo-image" id="logoImage" style="display: none;">
+                    <input type="file" id="logoInput" class="logo-input" accept="image/*" onchange="loadLogo(event)">
+                </div>
+                <div class="company-info">
+                    <h1><input type="text" class="editable" value="ROMMEL ROBERTO ROMERO" placeholder="Nombre de la empresa"></h1>
+                    <p><input type="text" class="editable" value="RRR's Remodelaciones" placeholder="Descripción del negocio"></p>
+                    <p><input type="text" class="editable" value="Casa 2D, Urb. Zorobaru San Sebastián, San José" placeholder="Dirección"></p>
+                    <p><input type="text" class="editable" value="Celular: 6214-5469 | Correo: Rommel76_3@hotmail.com" placeholder="Teléfono y correo"></p>
+                </div>
+            </div>
+            <div class="presupuesto-title">
+                <h2>PRESUPUESTO</h2>
+                <p>No. <input type="text" class="editable" value="PRE-2025-001" placeholder="Número"></p>
+                <p>Válido hasta: <input type="date" class="editable" value="2025-10-26"></p>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3>INFORMACIÓN DEL CLIENTE</h3>
+                    <p><strong>Nombre:</strong> <input type="text" class="editable-dark" value="Sr. Nelson Ramírez" placeholder="Nombre del cliente"></p>
+                    <p><strong>Ubicación:</strong> <input type="text" class="editable-dark" value="San Rafael Alajuela" placeholder="Ubicación del proyecto"></p>
+                    <p><strong>Fecha:</strong> <input type="date" class="editable-dark" value="2025-09-26"></p>
+                </div>
+                <div class="info-box">
+                    <h3>DATOS DEL PROYECTO</h3>
+                    <p><strong>Tipo:</strong> <input type="text" class="editable-dark" value="Construcción Residencial" placeholder="Tipo de proyecto"></p>
+                    <p><strong>Sistema:</strong> <input type="text" class="editable-dark" value="Liviano con paneles Denglass" placeholder="Sistema constructivo"></p>
+                    <p><strong>Tiempo estimado:</strong> <input type="text" class="editable-dark" value="4 semanas máximo" placeholder="Tiempo de ejecución"></p>
+                </div>
+            </div>
+
+            <div class="project-description">
+                <h3>DESCRIPCIÓN DEL PROYECTO</h3>
+                <p><textarea class="editable-dark" style="width: 100%; border: none; background: transparent; resize: vertical; font-family: inherit; min-height: 60px;">Se desarrollará una habitación modular de uso residencial bajo un sistema constructivo liviano con paneles de Denglass, incorporando elementos modernos y funcionales.</textarea></p>
+                
+                <h4>El proyecto contempla:</h4>
+                <ul class="editable-list" id="projectFeatures">
+                    <li class="editable-list-item">
+                        <button class="delete-item" onclick="deleteListItem(this)">×</button>
+                        <textarea placeholder="Descripción del elemento...">Paredes livianas con estructura y revestimiento en denglass</textarea>
+                    </li>
+                    <li class="editable-list-item">
+                        <button class="delete-item" onclick="deleteListItem(this)">×</button>
+                        <textarea placeholder="Descripción del elemento...">Muro frontal con bloque decorativo de vidrio (0.95 m x 2.27 m)</textarea>
+                    </li>
+                    <li class="editable-list-item">
+                        <button class="delete-item" onclick="deleteListItem(this)">×</button>
+                        <textarea placeholder="Descripción del elemento...">Muros de cierre posteriores y laterales completos</textarea>
+                    </li>
+                    <li class="editable-list-item">
+                        <button class="delete-item" onclick="deleteListItem(this)">×</button>
+                        <textarea placeholder="Descripción del elemento...">Instalación de puerta corrediza (1.25 m × 2.27 m)</textarea>
+                    </li>
+                    <li class="editable-list-item">
+                        <button class="delete-item" onclick="deleteListItem(this)">×</button>
+                        <textarea placeholder="Descripción del elemento...">Puerta tipo móvil-móvil (1.40 m × 2.27 m)</textarea>
+                    </li>
+                </ul>
+                <button class="add-row-btn" onclick="addListItem()">+ Agregar elemento</button>
+            </div>
+        </div>
+
+        <!-- Details Table -->
+        <div style="padding: 30px;">
+            <table class="details-table" id="detailsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 45%">Descripción</th>
+                        <th style="width: 8%">Cant.</th>
+                        <th style="width: 10%">Unidad</th>
+                        <th style="width: 16%">Materiales</th>
+                        <th style="width: 16%">Mano de Obra</th>
+                        <th style="width: 5%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                <td><textarea class="editable-dark" style="width: 100%; min-height: 40px; border: none; background: transparent; resize: vertical; font-family: inherit;" value="Construcción completa de habitación modular con sistema liviano">Construcción completa de habitación modular con sistema liviano</textarea></td>
+                        <td><input type="number" class="editable-dark" style="width: 60px;" value="1" onchange="calculateRow(this)"></td>
+                        <td><input type="text" class="editable-dark" style="width: 80px;" value="Global"></td>
+                        <td><input type="number" class="editable-dark amount" style="width: 100px;" value="2500000" onchange="calculateRow(this)"></td>
+                        <td><input type="number" class="editable-dark amount" style="width: 100px;" value="1725000" onchange="calculateRow(this)"></td>
+                        <td><button class="delete-row" onclick="deleteRow(this)">×</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="add-row-btn" onclick="addTableRow()">+ Agregar fila</button>
+
+            <div class="total-section">
+                <div class="total-row">
+                    <span>Subtotal Materiales:</span>
+                    <span id="subtotalMateriales">₡2,500,000.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Subtotal Mano de Obra:</span>
+                    <span id="subtotalManoObra">₡1,725,000.00</span>
+                </div>
+                <div class="total-row total-final">
+                    <span>TOTAL GENERAL:</span>
+                    <span id="totalGeneral">₡4,225,000.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conditions -->
+        <div class="conditions">
+            <h3>CONDICIONES COMERCIALES</h3>
+            <div class="conditions-grid">
+                <div class="condition-box">
+                    <h4><input type="text" class="editable-dark" value="Forma de Pago" style="font-weight: bold; color: #8B4513;"></h4>
+                    <ul class="editable-condition-list" id="formaPago">
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="50% al inicio para compra de materiales">
+                        </li>
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="50% semanalmente según avance del trabajo">
+                        </li>
+                    </ul>
+                    <button class="add-condition-btn" onclick="addConditionItem('formaPago')">+ Agregar condición</button>
+                </div>
+                <div class="condition-box">
+                    <h4><input type="text" class="editable-dark" value="Garantías y Plazos" style="font-weight: bold; color: #8B4513;"></h4>
+                    <ul class="editable-condition-list" id="garantias">
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Tiempo de entrega: 4 semanas máximo">
+                        </li>
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Garantía: 60 días a partir de la entrega">
+                        </li>
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Vigencia del presupuesto: 30 días">
+                        </li>
+                    </ul>
+                    <button class="add-condition-btn" onclick="addConditionItem('garantias')">+ Agregar condición</button>
+                </div>
+                <div class="condition-box">
+                    <h4><input type="text" class="editable-dark" value="Incluye" style="font-weight: bold; color: #8B4513;"></h4>
+                    <ul class="editable-condition-list" id="incluye">
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Todos los materiales especificados">
+                        </li>
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Mano de obra calificada">
+                        </li>
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Limpieza final del área de trabajo">
+                        </li>
+                    </ul>
+                    <button class="add-condition-btn" onclick="addConditionItem('incluye')">+ Agregar elemento</button>
+                </div>
+                <div class="condition-box">
+                    <h4><input type="text" class="editable-dark" value="No Incluye" style="font-weight: bold; color: #8B4513;"></h4>
+                    <ul class="editable-condition-list" id="noIncluye">
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Permisos municipales">
+                        </li>
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Instalaciones eléctricas">
+                        </li>
+                        <li class="editable-condition-item">
+                            <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                            <input type="text" class="editable-dark" style="width: 90%;" value="Pintura final (opcional bajo cotización separada)">
+                        </li>
+                    </ul>
+                    <button class="add-condition-btn" onclick="addConditionItem('noIncluye')">+ Agregar elemento</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong><input type="text" class="editable" value="¡Gracias por confiar en RRR's Remodelaciones!" style="text-align: center; width: 400px;"></strong></p>
+            <p><input type="text" class="editable" value="Construyendo sus sueños con calidad y profesionalismo" style="text-align: center; width: 400px;"></p>
+        </div>
+    </div>
+
+    <script>
+        let editMode = true;
+
+        function toggleEditMode() {
+            editMode = !editMode;
+            const editables = document.querySelectorAll('.editable, .editable-dark, textarea');
+            const buttons = document.querySelectorAll('.add-row-btn, .delete-row, .delete-item, .add-condition-btn, .delete-condition');
+            const editModeText = document.getElementById('editModeText');
+            
+            editables.forEach(input => {
+                input.disabled = !editMode;
+                input.style.pointerEvents = editMode ? 'auto' : 'none';
+            });
+            
+            buttons.forEach(btn => {
+                btn.style.display = editMode ? 'inline-block' : 'none';
+            });
+            
+            editModeText.textContent = editMode ? 'Vista' : 'Editar';
+        }
+
+        function loadLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const logoImage = document.getElementById('logoImage');
+                    const logoPlaceholder = document.getElementById('logoPlaceholder');
+                    
+                    logoImage.src = e.target.result;
+                    logoImage.style.display = 'block';
+                    logoPlaceholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function addTableRow() {
+            const table = document.getElementById('detailsTable').querySelector('tbody');
+            const rowCount = table.rows.length + 1;
+            const newRow = table.insertRow();
+            
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                                        <td><textarea class="editable-dark" style="width: 100%; min-height: 40px; border: none; background: transparent; resize: vertical; font-family: inherit;" placeholder="Descripción detallada del trabajo..."></textarea></td>
+                <td><input type="number" class="editable-dark" style="width: 60px;" value="1" onchange="calculateRow(this)"></td>
+                <td><input type="text" class="editable-dark" style="width: 80px;" value="Unidad"></td>
+                <td><input type="number" class="editable-dark amount" style="width: 100px;" value="0" onchange="calculateRow(this)"></td>
+                <td><input type="number" class="editable-dark amount" style="width: 100px;" value="0" onchange="calculateRow(this)"></td>
+                <td><button class="delete-row" onclick="deleteRow(this)">×</button></td>
+            `;
+            
+            calculateTotals();
+        }
+
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+            updateRowNumbers();
+            calculateTotals();
+        }
+
+        function updateRowNumbers() {
+            const rows = document.querySelectorAll('#detailsTable tbody tr');
+            rows.forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+            });
+        }
+
+        function calculateRow(input) {
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#detailsTable tbody tr');
+            let totalMateriales = 0;
+            let totalManoObra = 0;
+            
+            rows.forEach(row => {
+                const materiales = parseFloat(row.cells[4].querySelector('input').value) || 0;
+                const manoObra = parseFloat(row.cells[5].querySelector('input').value) || 0;
+                
+                totalMateriales += materiales;
+                totalManoObra += manoObra;
+            });
+            
+            document.getElementById('subtotalMateriales').textContent = `₡${totalMateriales.toLocaleString('es-CR')}.00`;
+            document.getElementById('subtotalManoObra').textContent = `₡${totalManoObra.toLocaleString('es-CR')}.00`;
+            document.getElementById('totalGeneral').textContent = `₡${(totalMateriales + totalManoObra).toLocaleString('es-CR')}.00`;
+        }
+
+        function addListItem() {
+            const list = document.getElementById('projectFeatures');
+            const newItem = document.createElement('li');
+            newItem.className = 'editable-list-item';
+            newItem.innerHTML = `
+                <button class="delete-item" onclick="deleteListItem(this)">×</button>
+                <textarea placeholder="Descripción del elemento..."></textarea>
+            `;
+            list.appendChild(newItem);
+        }
+
+        function deleteListItem(button) {
+            button.closest('li').remove();
+        }
+        
+        function addConditionItem(listId) {
+            const list = document.getElementById(listId);
+            const newItem = document.createElement('li');
+            newItem.className = 'editable-condition-item';
+            newItem.innerHTML = `
+                <button class="delete-condition" onclick="deleteConditionItem(this)">×</button>
+                <input type="text" class="editable-dark" style="width: 90%;" placeholder="Nueva condición...">
+            `;
+            list.appendChild(newItem);
+        }
+        
+        function deleteConditionItem(button) {
+            button.closest('li').remove();
+        }
+
+        // Initialize calculations
+        calculateTotals();
+        
+        // Auto-resize textareas
+        document.addEventListener('input', function(e) {
+            if (e.target.tagName === 'TEXTAREA') {
+                e.target.style.height = 'auto';
+                e.target.style.height = e.target.scrollHeight + 'px';
+            }
+        });
+    </script>
+</body>
+</html>

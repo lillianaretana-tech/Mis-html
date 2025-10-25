@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Costos - Proyectos de Construcción</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .section-content {
+            padding: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        input, select, textarea {
+            padding: 10px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .btn-auto {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #16a085 0%, #27ae60 100%);
+        }
+        
+        .btn-print {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+        
+        .btn-sheets {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+        
+        .btn-clear {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+        
+        .btn-remove {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-top: 15px;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .summary {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .summary h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .summary-item {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .summary-item h4 {
+            font-size: 0.8em;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+        
+        .summary-item .value {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        
+        .auto-generator {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #e74c3c;
+        }
+        
+        #measureFields {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        
+        .total-final {
+            background: rgba(255,255,255,0.2) !important;
+            border: 2px solid rgba(255,255,255,0.3) !important;
+        }
+        
+        .total-final .value {
+            font-size: 1.8em !important;
+        }
+
+        .commercial-units {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 10px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.8em;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+            }
+            
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗂️ Calculadora de Costos</h1>
+            <p>Proyectos de Construcción y Mantenimiento - Costa Rica</p>
+        </div>
+        
+        <div class="content">
+            <!-- Información del Proyecto -->
+            <div class="section">
+                <div class="section-header">📋 Información del Proyecto</div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectName">Nombre del Proyecto</label>
+                            <input type="text" id="projectName" placeholder="Ej: Remodelación Casa Pérez">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientName">Cliente</label>
+                            <input type="text" id="clientName" placeholder="Nombre del cliente">
+                        </div>
+                        <div class="form-group">
+                            <label for="projectDate">Fecha</label>
+                            <input type="date" id="projectDate">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="projectDescription">Descripción del Trabajo</label>
+                            <textarea id="projectDescription" rows="3" placeholder="Descripción detallada del proyecto..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generador Automático -->
+            <div class="auto-generator">
+                <h3 style="color: #e74c3c; margin-bottom: 15px;">🤖 Generador Automático de Presupuesto</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="workType">Tipo de Trabajo</label>
+                        <select id="workType" onchange="showMeasureFields()">
+                            <option value="">Seleccionar tipo...</option>
+                            <optgroup label="Construcción Básica">
+                                <option value="pared_block">Construcción de Pared (Block)</option>
+                                <option value="pared_gypsum">Paredes en Gypsum</option>
+                                <option value="chorrea_piso">Chorrea de Piso</option>
+                            </optgroup>
+                            <optgroup label="Pisos">
+                                <option value="piso_ceramica">Piso Cerámico</option>
+                                <option value="piso_porcelanato">Piso Porcelanato</option>
+                                <option value="piso_laminado">Piso Laminado</option>
+                                <option value="piso_deck">Piso Deck</option>
+                            </optgroup>
+                            <optgroup label="Techos y Cielorrasos">
+                                <option value="techo_lamina">Techo de Lámina</option>
+                                <option value="techo_policarbonato">Techo Policarbonato</option>
+                                <option value="techo_policelular">Techo Policelular</option>
+                                <option value="cielorraso_gypsum">Cielorraso Gypsum</option>
+                                <option value="cielorraso_pvc">Cielorraso Tablilla PVC</option>
+                            </optgroup>
+                            <optgroup label="Pintura">
+                                <option value="pintura_interior">Pintura Interior</option>
+                                <option value="pintura_exterior">Pintura Exterior</option>
+                            </optgroup>
+                            <optgroup label="Instalaciones">
+                                <option value="fontaneria">Fontanería</option>
+                                <option value="electricidad">Electricidad</option>
+                                <option value="canoas">Instalación de Canoas</option>
+                            </optgroup>
+                            <optgroup label="Ventanas y Aberturas">
+                                <option value="ventana_corrediza">Ventana Corrediza</option>
+                                <option value="puerta_principal">Puerta Principal</option>
+                                <option value="puerta_interior">Puerta Interior</option>
+                                <option value="ventana_fija">Ventana Fija</option>
+                                <option value="portones_garage">Portones de Garage</option>
+                            </optgroup>
+                            <optgroup label="Soldadura y Estructuras">
+                                <option value="soldadura_general">Soldadura General</option>
+                                <option value="estructura_metalica">Estructura Metálica</option>
+                            </optgroup>
+                            <optgroup label="Remodelaciones">
+                                <option value="remodelacion_banos">Remodelación de Baños</option>
+                                <option value="mueble_fregadero">Diseño Mueble Fregadero</option>
+                                <option value="modificacion_gradas">Modificación de Gradas</option>
+                            </optgroup>
+                            <optgroup label="Otros">
+                                <option value="acera_concreto">Acera de Concreto</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="qualityLevel">Nivel de Calidad</label>
+                        <select id="qualityLevel">
+                            <option value="economico">💰 Económico</option>
+                            <option value="premium">⭐ Premium</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="measureFields" style="display: none;">
+                    <div class="form-row" id="measureInputs"></div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <button class="btn btn-auto" onclick="generateBudget()">⚡ Generar Presupuesto Nuevo</button>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-add" onclick="addToBudget()">➕ Agregar al Presupuesto Actual</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Mano de Obra -->
+            <div class="section">
+                <div class="section-header">👷 Mano de Obra</div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Descripción del Trabajo</label>
+                            <input type="text" id="laborDesc" placeholder="Ej: Albañilería, Plomería, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Trabajadores</label>
+                            <input type="number" id="laborWorkers" placeholder="Cantidad" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Horas por Trabajador</label>
+                            <input type="number" id="laborHours" placeholder="Horas" min="0" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Tarifa por Hora (₡)</label>
+                            <input type="number" id="laborRate" placeholder="1721" min="0" step="100">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="addLabor()">➕ Agregar Mano de Obra</button>
+                    
+                    <table id="laborTable">
+                        <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Trab.</th>
+                                <th>Horas</th>
+                                <th>Días de Trabajo</th>
+                                <th>Tarifa/Hora</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección Materiales -->
+            <div class="section">
+                <div class="section-header">🧱 Materiales</div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Material</label>
+                            <input type="text" id="materialName" placeholder="Ej: Cemento, Ladrillos, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" id="materialQuantity" placeholder="Cantidad" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Unidad</label>
+                            <select id="materialUnit">
+                                <option value="m²">m² (metro cuadrado)</option>
+                                <option value="m³">m³ (metro cúbico)</option>
+                                <option value="kg">kg (kilogramo)</option>
+                                <option value="pza">pza (pieza)</option>
+                                <option value="m">m (metro)</option>
+                                <option value="gal">gal (galón)</option>
+                                <option value="saco">saco</option>
+                                <option value="caja">caja</option>
+                                <option value="kit">kit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Unitario (₡)</label>
+                            <input type="number" id="materialPrice" placeholder="2500" min="0" step="50">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="addMaterial()">➕ Agregar Material</button>
+                    
+                    <table id="materialTable">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Cant.</th>
+                                <th>Unidad</th>
+                                <th>Unidades Comerciales</th>
+                                <th>Precio Unit.</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Costos Adicionales -->
+            <div class="section">
+                <div class="section-header">💰 Costos Adicionales</div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Transporte (%)</label>
+                            <input type="number" id="transportPercent" placeholder="5" min="0" max="100" step="0.1" onchange="calculateTotals()">
+                        </div>
+                        <div class="form-group">
+                            <label>Imprevistos (%)</label>
+                            <input type="number" id="contingencyPercent" placeholder="10" min="0" max="100" step="0.1" onchange="calculateTotals()">
+                        </div>
+                        <div class="form-group">
+                            <label>Ganancia (%)</label>
+                            <input type="number" id="profitPercent" placeholder="20" min="0" max="100" step="0.1" onchange="calculateTotals()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen -->
+            <div class="summary">
+                <h3>📊 Resumen de Costos</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <h4>Mano de Obra</h4>
+                        <div class="value" id="totalLabor">₡0</div>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Materiales</h4>
+                        <div class="value" id="totalMaterials">₡0</div>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Subtotal</h4>
+                        <div class="value" id="subtotal">₡0</div>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Transporte</h4>
+                        <div class="value" id="transportCost">₡0</div>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Imprevistos</h4>
+                        <div class="value" id="contingencyCost">₡0</div>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Ganancia</h4>
+                        <div class="value" id="profitCost">₡0</div>
+                    </div>
+                    <div class="summary-item total-final">
+                        <h4>TOTAL FINAL</h4>
+                        <div class="value" id="grandTotal">₡0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-print" onclick="printQuote()">🖨️ Imprimir Cotización</button>
+                <button class="btn btn-sheets" onclick="saveToGoogleSheets()">💾 Guardar en Google Sheets</button>
+                <button class="btn btn-clear" onclick="clearAll()">🗑️ Limpiar Todo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let laborItems = [];
+        let materialItems = [];
+
+        // Definición de tipos de trabajo
+        const workTypes = {
+            pared_block: { name: "Construcción de Pared (Block)", field: "area", label: "Área de pared (m²)", placeholder: "25" },
+            pared_gypsum: { name: "Paredes en Gypsum", field: "area", label: "Área de pared (m²)", placeholder: "20" },
+            chorrea_piso: { name: "Chorrea de Piso", field: "area", label: "Área a chorrear (m²)", placeholder: "40" },
+            piso_ceramica: { name: "Piso Cerámico", field: "area", label: "Área a cubrir (m²)", placeholder: "35" },
+            piso_porcelanato: { name: "Piso Porcelanato", field: "area", label: "Área a cubrir (m²)", placeholder: "30" },
+            piso_laminado: { name: "Piso Laminado", field: "area", label: "Área a cubrir (m²)", placeholder: "28" },
+            piso_deck: { name: "Piso Deck", field: "area", label: "Área a cubrir (m²)", placeholder: "30" },
+            techo_lamina: { name: "Techo de Lámina", field: "area", label: "Área del techo (m²)", placeholder: "50" },
+            techo_policarbonato: { name: "Techo Policarbonato", field: "area", label: "Área del techo (m²)", placeholder: "25" },
+            techo_policelular: { name: "Techo Policelular", field: "area", label: "Área del techo (m²)", placeholder: "35" },
+            cielorraso_gypsum: { name: "Cielorraso Gypsum", field: "area", label: "Área del cielorraso (m²)", placeholder: "40" },
+            cielorraso_pvc: { name: "Cielorraso Tablilla PVC", field: "area", label: "Área del cielorraso (m²)", placeholder: "30" },
+            pintura_interior: { name: "Pintura Interior", field: "area", label: "Área a pintar (m²)", placeholder: "80" },
+            pintura_exterior: { name: "Pintura Exterior", field: "area", label: "Área a pintar (m²)", placeholder: "120" },
+            fontaneria: { name: "Fontanería", field: "puntos", label: "Puntos de agua (pza)", placeholder: "8" },
+            electricidad: { name: "Electricidad", field: "puntos", label: "Puntos eléctricos (pza)", placeholder: "12" },
+            canoas: { name: "Instalación de Canoas", field: "metros", label: "Metros lineales (m)", placeholder: "25" },
+            ventana_corrediza: { name: "Ventana Corrediza", field: "area", label: "Área de ventana (m²)", placeholder: "2.5" },
+            puerta_principal: { name: "Puerta Principal", field: "area", label: "Área de puerta (m²)", placeholder: "2.1" },
+            puerta_interior: { name: "Puerta Interior", field: "area", label: "Área de puerta (m²)", placeholder: "1.8" },
+            ventana_fija: { name: "Ventana Fija", field: "area", label: "Área de ventana (m²)", placeholder: "1.5" },
+            portones_garage: { name: "Portones de Garage", field: "area", label: "Área de portones (m²)", placeholder: "12" },
+            soldadura_general: { name: "Soldadura General", field: "metros", label: "Metros de soldadura (m)", placeholder: "15" },
+            estructura_metalica: { name: "Estructura Metálica", field: "area", label: "Área estructura (m²)", placeholder: "20" },
+            remodelacion_banos: { name: "Remodelación de Baños", field: "area", label: "Área del baño (m²)", placeholder: "6" },
+            mueble_fregadero: { name: "Diseño Mueble Fregadero", field: "metros", label: "Metros lineales (m)", placeholder: "3" },
+            modificacion_gradas: { name: "Modificación de Gradas", field: "escalones", label: "Número de escalones (pza)", placeholder: "8" },
+            acera_concreto: { name: "Acera de Concreto", field: "area", label: "Área de acera (m²)", placeholder: "15" }
+        };
+
+        function formatMoney(amount) {
+            return '₡' + Math.round(amount).toLocaleString('es-CR');
+        }
+
+        function showMeasureFields() {
+            const workType = document.getElementById('workType').value;
+            const measureFields = document.getElementById('measureFields');
+            const measureInputs = document.getElementById('measureInputs');
+            
+            if (!workType || !workTypes[workType]) {
+                measureFields.style.display = 'none';
+                return;
+            }
+            
+            const work = workTypes[workType];
+            measureInputs.innerHTML = `
+                <div class="form-group">
+                    <label for="workMeasure">${work.label}</label>
+                    <input type="number" id="workMeasure" placeholder="${work.placeholder}" min="0" step="0.1">
+                </div>
+            `;
+            measureFields.style.display = 'block';
+        }
+
+        function calculateCommercialUnits(material, quantity, unit) {
+            const materialName = material.toLowerCase();
+            const conversions = {
+                'lamina': { unitSize: 3.66, unitName: 'láminas' },
+                'zinc': { unitSize: 3.66, unitName: 'láminas' },
+                'policarbonato': { unitSize: 12.6, unitName: 'láminas' },
+                'policelular': { unitSize: 12.6, unitName: 'láminas' },
+                'tuberia': { unitSize: 6, unitName: 'tubos' },
+                'tubo': { unitSize: 6, unitName: 'tubos' },
+                'pvc': { unitSize: 6, unitName: 'tubos' },
+                'cemento': { unitSize: 1, unitName: 'sacos' },
+                'saco': { unitSize: 1, unitName: 'sacos' },
+                'cable': { unitSize: 100, unitName: 'rollos' },
+                'alambre': { unitSize: 100, unitName: 'rollos' },
+                'hierro': { unitSize: 6, unitName: 'varillas' },
+                'varilla': { unitSize: 6, unitName: 'varillas' },
+                'gypsum': { unitSize: 3, unitName: 'láminas' },
+                'drywall': { unitSize: 3, unitName: 'láminas' },
+                'ceramica': { unitSize: 1.2, unitName: 'cajas' },
+                'porcelanato': { unitSize: 1.44, unitName: 'cajas' },
+                'laminado': { unitSize: 2, unitName: 'cajas' },
+                'pintura': { unitSize: 1, unitName: 'galones' },
+                'sellador': { unitSize: 1, unitName: 'galones' },
+                'perfil': { unitSize: 6, unitName: 'perfiles' },
+                'angular': { unitSize: 6, unitName: 'angulares' },
+                'canal': { unitSize: 6, unitName: 'canales' },
+                'canoa': { unitSize: 3, unitName: 'secciones' },
+                'bajante': { unitSize: 3, unitName: 'secciones' },
+                'block': { unitSize: 1, unitName: 'blocks' }
+            };
+            
+            let conversion = null;
+            for (const key in conversions) {
+                if (materialName.includes(key)) {
+                    conversion = conversions[key];
+                    break;
+                }
+            }
+            
+            if (!conversion) return '-';
+            
+            let commercialUnits = 0;
+            if (unit === 'm²' || unit === 'm' || unit === 'kg') {
+                commercialUnits = Math.ceil(quantity / conversion.unitSize);
+            } else if (unit === 'pza') {
+                commercialUnits = quantity;
+                return `${commercialUnits} ${conversion.unitName}`;
+            } else if (unit === 'gal' || unit === 'saco') {
+                commercialUnits = Math.ceil(quantity);
+                return `${commercialUnits} ${conversion.unitName}`;
+            } else {
+                commercialUnits = Math.ceil(quantity / conversion.unitSize);
+            }
+            
+            return `${commercialUnits} ${conversion.unitName}`;
+        }
+
+// FUNCIÓN COMPLETA CON MATERIALES ESPECÍFICOS - PRECIOS COSTA RICA 2025
+        function generateWorkBudget(workType, measure, isEconomic) {
+            switch(workType) {
+                
+                // =============== CONSTRUCCIÓN BÁSICA ===============
+                
+                case 'pared_block':
+                    return {
+                        labor: [
+                            { description: "Albañil especializado", workers: 1, hours: measure * 1.2, rate: 1721 },
+                            { description: "Ayudante albañil", workers: 1, hours: measure * 1.0, rate: 1663 },
+                            { description: "Repello y acabado", workers: 1, hours: measure * 0.8, rate: 1721 },
+                            { description: "Instalación refuerzo hierro", workers: 1, hours: measure * 0.5, rate: 1800 },
+                            { description: "Limpieza y acabados finales", workers: 1, hours: measure * 0.3, rate: 1663 }
+                        ],
+                        materials: [
+                            { name: "Block concreto 12×20×40 cm", quantity: measure * 12.5, unit: "pza", price: isEconomic ? 400 : 420 },
+                            { name: "Cemento gris 50 kg", quantity: measure * 0.15, unit: "saco", price: isEconomic ? 6300 : 7200 },
+                            { name: "Arena m³", quantity: measure * 0.04, unit: "m³", price: 18000 },
+                            { name: "Piedra cuarta m³", quantity: measure * 0.03, unit: "m³", price: isEconomic ? 17500 : 24000 },
+                            { name: "Varilla corrugada #3 (3/8, 6 m)", quantity: measure * 0.25, unit: "pza", price: 1530 },
+                            { name: "Varilla corrugada #4 (1/2, 6 m)", quantity: measure * 0.13, unit: "pza", price: 2900 },
+                            { name: "Alambre recocido #16", quantity: measure * 0.2, unit: "kg", price: 600 },
+                            { name: "Estribos prefabricados", quantity: measure * 2, unit: "pza", price: 350 },
+                            { name: "Mezcla para repello", quantity: measure * 0.02, unit: "m³", price: 15000 },
+                            { name: "Aditivo impermeabilizante", quantity: measure * 0.1, unit: "kg", price: 2500 }
+                        ]
+                    };
+
+                case 'pared_gypsum':
+                    return {
+                        labor: [
+                            { description: "Especialista en drywall", workers: 1, hours: measure * 0.8, rate: 1800 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 0.6, rate: 1663 },
+                            { description: "Estructura metálica", workers: 1, hours: measure * 0.4, rate: 1721 },
+                            { description: "Acabados y masillado", workers: 1, hours: measure * 0.5, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Gypsum 12 mm (1,22×2,44 m)", quantity: measure / 3, unit: "pza", price: isEconomic ? 6550 : 9000 },
+                            { name: "Estructura metálica para gypsum", quantity: measure * 1.2, unit: "m", price: 800 },
+                            { name: "Tornillos para gypsum", quantity: measure * 15, unit: "pza", price: 45 },
+                            { name: "Masilla para juntas", quantity: measure * 0.3, unit: "kg", price: 1200 },
+                            { name: "Cinta para juntas", quantity: measure * 0.8, unit: "m", price: 180 },
+                            { name: "Primer sellador", quantity: measure * 0.1, unit: "gal", price: 8500 },
+                            { name: "Aislante térmico/acústico", quantity: measure * 1, unit: "m²", price: isEconomic ? 1500 : 2800 },
+                            { name: "Perfiles esquineros", quantity: measure * 0.2, unit: "m", price: 450 },
+                            { name: "Anclas y fijadores", quantity: measure * 8, unit: "pza", price: 125 }
+                        ]
+                    };
+
+                case 'chorrea_piso':
+                    return {
+                        labor: [
+                            { description: "Maestro de obra", workers: 1, hours: measure * 1.5, rate: 1800 },
+                            { description: "Albañiles", workers: 2, hours: measure * 1.2, rate: 1721 },
+                            { description: "Ayudantes", workers: 2, hours: measure * 1.0, rate: 1663 },
+                            { description: "Acabado y pulido", workers: 1, hours: measure * 0.8, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Cemento gris 50 kg", quantity: measure * 0.25, unit: "saco", price: isEconomic ? 6300 : 7200 },
+                            { name: "Arena fina m³", quantity: measure * 0.08, unit: "m³", price: 18600 },
+                            { name: "Piedra cuarta m³", quantity: measure * 0.15, unit: "m³", price: isEconomic ? 17500 : 24000 },
+                            { name: "Malla electrosoldada 6×6 10/10", quantity: measure / 6, unit: "pza", price: 10000 },
+                            { name: "Varilla corrugada #3", quantity: measure * 0.15, unit: "pza", price: 1530 },
+                            { name: "Alambre de amarre", quantity: measure * 0.3, unit: "kg", price: 600 },
+                            { name: "Aditivo plastificante", quantity: measure * 0.05, unit: "kg", price: 3500 },
+                            { name: "Impermeabilizante integral", quantity: measure * 0.1, unit: "kg", price: 2800 },
+                            { name: "Madera para formaleta", quantity: measure * 0.1, unit: "m²", price: 2500 },
+                            { name: "Clavos y alambre formaleta", quantity: measure * 0.2, unit: "kg", price: 800 }
+                        ]
+                    };
+
+                // =============== PISOS ===============
+                
+                case 'piso_ceramica':
+                    return {
+                        labor: [
+                            { description: "Ceramista especializado", workers: 1, hours: measure * 1.0, rate: 1800 },
+                            { description: "Ayudante ceramista", workers: 1, hours: measure * 0.8, rate: 1663 },
+                            { description: "Preparación superficie", workers: 1, hours: measure * 0.3, rate: 1721 },
+                            { description: "Acabados y limpieza", workers: 1, hours: measure * 0.4, rate: 1721 }
+                        ],
+                        materials: [
+                            { name: "Cerámica piso 40×40 (caja ~1.6 m²)", quantity: measure / 1.6, unit: "caja", price: isEconomic ? 4500 : 8500 },
+                            { name: "Pegamento para cerámica", quantity: measure * 0.02, unit: "saco", price: 2800 },
+                            { name: "Lechada para cerámica", quantity: measure * 0.3, unit: "kg", price: 1200 },
+                            { name: "Niveladores de piso", quantity: measure * 15, unit: "pza", price: 120 },
+                            { name: "Crucetas 3mm", quantity: measure * 10, unit: "pza", price: 25 },
+                            { name: "Zócalo cerámico", quantity: measure * 0.4, unit: "m", price: 850 },
+                            { name: "Sellador de juntas", quantity: measure * 0.05, unit: "tubo", price: 2500 },
+                            { name: "Limpiador cerámico", quantity: measure * 0.02, unit: "gal", price: 3500 }
+                        ]
+                    };
+
+                case 'piso_porcelanato':
+                    return {
+                        labor: [
+                            { description: "Especialista en porcelanato", workers: 1, hours: measure * 1.2, rate: 2000 },
+                            { description: "Ayudante especializado", workers: 1, hours: measure * 1.0, rate: 1721 },
+                            { description: "Nivelación superficie", workers: 1, hours: measure * 0.4, rate: 1800 },
+                            { description: "Pulido y acabados finales", workers: 1, hours: measure * 0.5, rate: 2000 }
+                        ],
+                        materials: [
+                            { name: isEconomic ? "Porcelanato 60×60 (caja ~1.44 m²)" : "Porcelanato premium 60×60 (caja ~1.44 m²)", quantity: measure / 1.44, unit: "caja", price: isEconomic ? 7300 : 13000 },
+                            { name: "Pegamento especial porcelanato", quantity: measure * 0.025, unit: "saco", price: 3500 },
+                            { name: "Niveladores de piso", quantity: measure * 20, unit: "pza", price: 150 },
+                            { name: "Lechada premium", quantity: measure * 0.4, unit: "kg", price: 1800 },
+                            { name: "Perfil de transición", quantity: measure * 0.2, unit: "m", price: 1200 },
+                            { name: "Sellador premium", quantity: measure * 0.08, unit: "tubo", price: 3500 }
+                        ]
+                    };
+
+                case 'piso_laminado':
+                    return {
+                        labor: [
+                            { description: "Instalador de laminado", workers: 1, hours: measure * 0.6, rate: 1800 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 0.5, rate: 1663 },
+                            { description: "Preparación y nivelación", workers: 1, hours: measure * 0.3, rate: 1721 }
+                        ],
+                        materials: [
+                            { name: isEconomic ? "Piso laminado SPC (caja 2 m²)" : "Piso laminado premium SPC (caja 2 m²)", quantity: measure / 2, unit: "caja", price: isEconomic ? 18850 : 26500 },
+                            { name: "Foam underlayment", quantity: measure * 1.05, unit: "m²", price: 850 },
+                            { name: "Zócalo laminado", quantity: measure * 0.4, unit: "m", price: 650 },
+                            { name: "Transiciones y umbrales", quantity: measure * 0.1, unit: "m", price: 1200 },
+                            { name: "Clavos y accesorios", quantity: measure * 0.05, unit: "kit", price: 1500 }
+                        ]
+                    };
+
+                case 'piso_deck':
+                    return {
+                        labor: [
+                            { description: "Carpintero especializado", workers: 1, hours: measure * 1.0, rate: 1900 },
+                            { description: "Ayudante carpintería", workers: 1, hours: measure * 0.8, rate: 1663 },
+                            { description: "Estructura soporte", workers: 1, hours: measure * 0.6, rate: 1800 },
+                            { description: "Acabados y sellado", workers: 1, hours: measure * 0.5, rate: 1900 }
+                        ],
+                        materials: [
+                            { name: "Piso Deck WPC exterior", quantity: measure * 1.1, unit: "m²", price: isEconomic ? 9950 : 20000 },
+                            { name: "Estructura soporte deck", quantity: measure * 1.5, unit: "m", price: 1200 },
+                            { name: "Tornillos deck inoxidables", quantity: measure * 25, unit: "pza", price: 120 },
+                            { name: "Clips de fijación deck", quantity: measure * 8, unit: "pza", price: 180 },
+                            { name: "Membrana impermeabilizante", quantity: measure * 1, unit: "m²", price: 850 },
+                            { name: "Sellador protector deck", quantity: measure * 0.1, unit: "gal", price: 15000 },
+                            { name: "Perfiles de acabado", quantity: measure * 0.3, unit: "m", price: 950 },
+                            { name: "Anclas de concreto", quantity: measure * 4, unit: "pza", price: 350 }
+                        ]
+                    };
+
+                // =============== TECHOS Y CIELORRASOS ===============
+                
+                case 'techo_lamina':
+                    return {
+                        labor: [
+                            { description: "Techador especializado", workers: 2, hours: measure * 0.8, rate: 1800 },
+                            { description: "Ayudante techado", workers: 2, hours: measure * 0.6, rate: 1663 },
+                            { description: "Estructura metálica", workers: 1, hours: measure * 0.5, rate: 1721 },
+                            { description: "Accesorios y acabados", workers: 1, hours: measure * 0.4, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Lámina zinc esmaltada cal. 26 (3.66 m)", quantity: measure / 3.66, unit: "pza", price: 10450 },
+                            { name: "Estructura de tubos cuadrados", quantity: measure * 0.8, unit: "m", price: 1200 },
+                            { name: "Tornillos autorroscantes", quantity: measure * 8, unit: "pza", price: 125 },
+                            { name: "Caballete metálico", quantity: measure * 0.1, unit: "m", price: 2500 },
+                            { name: "Canoa y accesorios", quantity: measure * 0.3, unit: "m", price: 1800 },
+                            { name: "Aislante térmico", quantity: measure * 1, unit: "m²", price: isEconomic ? 1500 : 2500 }
+                        ]
+                    };
+
+                case 'techo_policarbonato':
+                    return {
+                        labor: [
+                            { description: "Especialista policarbonato", workers: 1, hours: measure * 1.0, rate: 2000 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 0.8, rate: 1721 },
+                            { description: "Estructura aluminio", workers: 1, hours: measure * 0.6, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Lámina policarbonato 6-10mm (2.1×6 m)", quantity: measure / 12.6, unit: "pza", price: isEconomic ? 65000 : 105000 },
+                            { name: "Estructura aluminio", quantity: measure * 1.2, unit: "m", price: 2500 },
+                            { name: "Perfiles de cierre", quantity: measure * 0.8, unit: "m", price: 850 },
+                            { name: "Tornillos especiales", quantity: measure * 6, unit: "pza", price: 180 },
+                            { name: "Silicón estructural", quantity: measure * 0.1, unit: "tubo", price: 3500 },
+                            { name: "Accesorios de fijación", quantity: measure * 4, unit: "pza", price: 450 }
+                        ]
+                    };
+
+                case 'techo_policelular':
+                    return {
+                        labor: [
+                            { description: "Instalador policelular", workers: 1, hours: measure * 0.9, rate: 1900 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 0.7, rate: 1663 },
+                            { description: "Estructura soporte", workers: 1, hours: measure * 0.5, rate: 1721 }
+                        ],
+                        materials: [
+                            { name: "Lámina policelular (2.1×6 m)", quantity: measure / 12.6, unit: "pza", price: isEconomic ? 60000 : 90000 },
+                            { name: "Perfiles de aluminio", quantity: measure * 1.0, unit: "m", price: 2200 },
+                            { name: "Perfiles H y U", quantity: measure * 0.5, unit: "m", price: 1200 },
+                            { name: "Tornillos con arandelas", quantity: measure * 8, unit: "pza", price: 150 },
+                            { name: "Tapas terminales", quantity: measure * 0.2, unit: "m", price: 800 },
+                            { name: "Silicón neutro", quantity: measure * 0.05, unit: "tubo", price: 2500 },
+                            { name: "Cinta de aluminio", quantity: measure * 0.3, unit: "m", price: 450 },
+                            { name: "Abrazaderas metálicas", quantity: measure * 6, unit: "pza", price: 250 }
+                        ]
+                    };
+
+                case 'cielorraso_gypsum':
+                    return {
+                        labor: [
+                            { description: "Especialista cielorraso", workers: 1, hours: measure * 0.9, rate: 1800 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 0.7, rate: 1663 },
+                            { description: "Estructura suspendida", workers: 1, hours: measure * 0.5, rate: 1721 },
+                            { description: "Masillado y acabados", workers: 1, hours: measure * 0.6, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Gypsum 12 mm (1,22×2,44 m)", quantity: measure / 3, unit: "pza", price: isEconomic ? 6550 : 9000 },
+                            { name: "Perfiles metálicos suspensión", quantity: measure * 1.8, unit: "m", price: 650 },
+                            { name: "Tensor para cielorraso", quantity: measure * 4, unit: "pza", price: 280 },
+                            { name: "Tornillos para gypsum", quantity: measure * 20, unit: "pza", price: 45 },
+                            { name: "Masilla para juntas", quantity: measure * 0.4, unit: "kg", price: 1200 },
+                            { name: "Cinta para juntas", quantity: measure * 1.2, unit: "m", price: 180 },
+                            { name: "Primer sellador", quantity: measure * 0.12, unit: "gal", price: 8500 },
+                            { name: "Anclajes al techo", quantity: measure * 8, unit: "pza", price: 180 },
+                            { name: "Esquineros metálicos", quantity: measure * 0.3, unit: "m", price: 450 }
+                        ]
+                    };
+
+                case 'cielorraso_pvc':
+                    return {
+                        labor: [
+                            { description: "Instalador PVC", workers: 1, hours: measure * 0.7, rate: 1800 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 0.5, rate: 1663 },
+                            { description: "Estructura soporte", workers: 1, hours: measure * 0.4, rate: 1721 }
+                        ],
+                        materials: [
+                            { name: "Tablilla PVC cielorraso", quantity: measure * 1.1, unit: "m²", price: isEconomic ? 2800 : 4500 },
+                            { name: "Perfiles de aluminio", quantity: measure * 1.5, unit: "m", price: 850 },
+                            { name: "Molduras PVC", quantity: measure * 0.4, unit: "m", price: 650 },
+                            { name: "Grapas y clips", quantity: measure * 15, unit: "pza", price: 85 },
+                            { name: "Tornillos autorroscantes", quantity: measure * 12, unit: "pza", price: 65 },
+                            { name: "Tensor metálico", quantity: measure * 3, unit: "pza", price: 280 },
+                            { name: "Anclajes al techo", quantity: measure * 6, unit: "pza", price: 180 },
+                            { name: "Sellador de juntas", quantity: measure * 0.03, unit: "tubo", price: 1800 },
+                            { name: "Limpiador PVC", quantity: measure * 0.01, unit: "gal", price: 2500 }
+                        ]
+                    };
+
+                // =============== PINTURAS ===============
+                
+                case 'pintura_interior':
+                    return {
+                        labor: [
+                            { description: "Pintor especializado", workers: 1, hours: measure * 0.4, rate: 1721 },
+                            { description: "Ayudante pintor", workers: 1, hours: measure * 0.3, rate: 1663 },
+                            { description: "Preparación superficies", workers: 1, hours: measure * 0.2, rate: 1721 },
+                            { description: "Acabados finales", workers: 1, hours: measure * 0.2, rate: 1721 }
+                        ],
+                        materials: [
+                            { name: "Pintura interior (galón blanco)", quantity: measure / 35, unit: "gal", price: isEconomic ? 7500 : 17500 },
+                            { name: "Primer sellador", quantity: measure / 40, unit: "gal", price: 8500 },
+                            { name: "Lija para pared", quantity: measure * 0.1, unit: "pza", price: 450 },
+                            { name: "Masilla acrílica", quantity: measure * 0.2, unit: "kg", price: 1200 },
+                            { name: "Rodillos y brochas", quantity: measure * 0.05, unit: "kit", price: 3500 },
+                            { name: "Cinta de pintor", quantity: measure * 0.3, unit: "m", price: 180 },
+                            { name: "Plástico protector", quantity: measure * 1.2, unit: "m²", price: 120 },
+                            { name: "Thinner/diluyente", quantity: measure * 0.02, unit: "gal", price: 2800 }
+                        ]
+                    };
+
+                case 'pintura_exterior':
+                    return {
+                        labor: [
+                            { description: "Pintor especializado exterior", workers: 1, hours: measure * 0.5, rate: 1800 },
+                            { description: "Ayudante pintor", workers: 1, hours: measure * 0.4, rate: 1663 },
+                            { description: "Preparación y lijado", workers: 1, hours: measure * 0.3, rate: 1721 },
+                            { description: "Aplicación sellador", workers: 1, hours: measure * 0.2, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Pintura exterior cubeta ~19 L", quantity: measure / 120, unit: "cubeta", price: isEconomic ? 100000 : 120000 },
+                            { name: "Sellador exterior", quantity: measure / 35, unit: "gal", price: 12000 },
+                            { name: "Masilla exterior resistente", quantity: measure * 0.3, unit: "kg", price: 1800 },
+                            { name: "Lija agua grano fino", quantity: measure * 0.15, unit: "pza", price: 650 },
+                            { name: "Rodillos exterior", quantity: measure * 0.03, unit: "pza", price: 2500 },
+                            { name: "Brochas especializadas", quantity: measure * 0.02, unit: "pza", price: 1800 },
+                            { name: "Limpiador de superficies", quantity: measure * 0.05, unit: "gal", price: 3500 },
+                            { name: "Anticorrosivo (metal)", quantity: measure * 0.1, unit: "gal", price: 8500 }
+                        ]
+                    };
+
+                // =============== INSTALACIONES ===============
+                
+                case 'fontaneria':
+                    return {
+                        labor: [
+                            { description: "Plomero certificado", workers: 1, hours: measure * 2.5, rate: 2000 },
+                            { description: "Ayudante plomería", workers: 1, hours: measure * 2.0, rate: 1663 },
+                            { description: "Excavación zanjas", workers: 1, hours: measure * 1.0, rate: 1721 },
+                            { description: "Pruebas y acabados", workers: 1, hours: measure * 0.8, rate: 2000 }
+                        ],
+                        materials: [
+                            { name: "Tubo PVC ½\" (6 m)", quantity: measure * 0.8, unit: "pza", price: 6290 },
+                            { name: "Tubo PVC ¾\" (6 m)", quantity: measure * 0.5, unit: "pza", price: 8500 },
+                            { name: "Tubo PVC 2\" desagüe (6 m)", quantity: measure * 0.3, unit: "pza", price: 20600 },
+                            { name: "Codos PVC ½\"", quantity: measure * 4, unit: "pza", price: 180 },
+                            { name: "Tees PVC ½\"", quantity: measure * 2, unit: "pza", price: 220 },
+                            { name: "Llaves de paso ½\"", quantity: measure * 1, unit: "pza", price: 2500 },
+                            { name: "Pegamento PVC", quantity: measure * 0.1, unit: "tubo", price: 1800 },
+                            { name: "Teflón y accesorios", quantity: measure * 1, unit: "kit", price: 1500 },
+                            { name: "Válvulas check", quantity: measure * 0.5, unit: "pza", price: 3500 },
+                            { name: "Accesorios varios fontanería", quantity: measure * 1, unit: "kit", price: 2500 }
+                        ]
+                    };
+
+                case 'electricidad':
+                    return {
+                        labor: [
+                            { description: "Electricista certificado", workers: 1, hours: measure * 1.8, rate: 2000 },
+                            { description: "Ayudante electricista", workers: 1, hours: measure * 1.5, rate: 1663 },
+                            { description: "Canalización", workers: 1, hours: measure * 0.8, rate: 1721 },
+                            { description: "Pruebas y conexiones", workers: 1, hours: measure * 0.5, rate: 2000 }
+                        ],
+                        materials: [
+                            { name: "Cable THHN #12 (rollo 100m)", quantity: measure * 0.15, unit: "rollo", price: 22000 },
+                            { name: "Cable THHN #14 (rollo 100m)", quantity: measure * 0.1, unit: "rollo", price: 18000 },
+                            { name: "Tubo EMT ¾\" (3 m)", quantity: measure * 1.2, unit: "pza", price: 1800 },
+                            { name: "Cajas eléctricas octagonales", quantity: measure * 1, unit: "pza", price: 350 },
+                            { name: "Cajas rectangulares", quantity: measure * 0.8, unit: "pza", price: 280 },
+                            { name: "Tomacorrientes dobles", quantity: measure * 0.6, unit: "pza", price: 1200 },
+                            { name: "Interruptores sencillos", quantity: measure * 0.4, unit: "pza", price: 850 },
+                            { name: "Breakers 20A", quantity: measure * 0.2, unit: "pza", price: 3500 },
+                            { name: "Conectores y accesorios", quantity: measure * 1, unit: "kit", price: 2000 },
+                            { name: "Cinta aislante", quantity: measure * 0.1, unit: "rollo", price: 450 }
+                        ]
+                    };
+
+                case 'canoas':
+                    return {
+                        labor: [
+                            { description: "Techador especializado", workers: 1, hours: measure * 0.8, rate: 1800 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 0.6, rate: 1663 },
+                            { description: "Soldadura y fijación", workers: 1, hours: measure * 0.4, rate: 1900 }
+                        ],
+                        materials: [
+                            { name: "Canoa galvanizada 6\" (3 m)", quantity: measure / 3, unit: "pza", price: 4500 },
+                            { name: "Bajante galvanizado 4\" (3 m)", quantity: measure * 0.3, unit: "pza", price: 3200 },
+                            { name: "Codos bajante 90°", quantity: measure * 0.2, unit: "pza", price: 850 },
+                            { name: "Soportes canoa", quantity: measure * 0.8, unit: "pza", price: 650 },
+                            { name: "Tornillos galvanizados", quantity: measure * 8, unit: "pza", price: 120 },
+                            { name: "Silicón estructural", quantity: measure * 0.1, unit: "tubo", price: 3500 },
+                            { name: "Tapas terminales", quantity: measure * 0.2, unit: "pza", price: 450 },
+                            { name: "Abrazaderas bajante", quantity: measure * 0.6, unit: "pza", price: 350 }
+                        ]
+                    };
+
+                // =============== VENTANAS Y ABERTURAS ===============
+                
+                case 'ventana_corrediza':
+                    return {
+                        labor: [
+                            { description: "Especialista ventanas", workers: 1, hours: measure * 3.0, rate: 1900 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 2.5, rate: 1663 },
+                            { description: "Acabados marco", workers: 1, hours: measure * 1.5, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Marco aluminio ventana", quantity: measure * 4, unit: "m", price: isEconomic ? 3500 : 5500 },
+                            { name: "Vidrio 4mm", quantity: measure * 1.1, unit: "m²", price: isEconomic ? 8500 : 12000 },
+                            { name: "Herrajes ventana corrediza", quantity: measure * 1, unit: "kit", price: isEconomic ? 15000 : 25000 },
+                            { name: "Burletes y empaques", quantity: measure * 4, unit: "m", price: 450 },
+                            { name: "Tornillos y anclajes", quantity: measure * 12, unit: "pza", price: 150 },
+                            { name: "Silicón sellador", quantity: measure * 0.2, unit: "tubo", price: 2500 },
+                            { name: "Mortero instalación", quantity: measure * 0.05, unit: "saco", price: 2800 }
+                        ]
+                    };
+
+                case 'puerta_principal':
+                    return {
+                        labor: [
+                            { description: "Carpintero especializado", workers: 1, hours: measure * 4.0, rate: 2000 },
+                            { description: "Ayudante carpintería", workers: 1, hours: measure * 3.0, rate: 1663 },
+                            { description: "Acabados y ajustes", workers: 1, hours: measure * 2.0, rate: 1900 }
+                        ],
+                        materials: [
+                            { name: "Puerta principal madera/metal", quantity: measure * 1, unit: "pza", price: isEconomic ? 85000 : 180000 },
+                            { name: "Marco puerta principal", quantity: measure * 6, unit: "m", price: isEconomic ? 4500 : 7500 },
+                            { name: "Bisagras reforzadas 4\"", quantity: 3, unit: "pza", price: isEconomic ? 2500 : 4500 },
+                            { name: "Cerradura seguridad", quantity: 1, unit: "pza", price: isEconomic ? 25000 : 65000 },
+                            { name: "Manijas y accesorios", quantity: 1, unit: "kit", price: isEconomic ? 8500 : 18000 },
+                            { name: "Sellador puerta", quantity: measure * 3, unit: "m", price: 650 },
+                            { name: "Tornillos y anclajes", quantity: 20, unit: "pza", price: 180 }
+                        ]
+                    };
+
+                case 'puerta_interior':
+                    return {
+                        labor: [
+                            { description: "Carpintero", workers: 1, hours: measure * 2.5, rate: 1800 },
+                            { description: "Ayudante carpintería", workers: 1, hours: measure * 2.0, rate: 1663 },
+                            { description: "Acabados", workers: 1, hours: measure * 1.0, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Puerta interior MDF/madera", quantity: measure * 1, unit: "pza", price: isEconomic ? 35000 : 65000 },
+                            { name: "Marco puerta interior", quantity: measure * 5, unit: "m", price: isEconomic ? 2500 : 4000 },
+                            { name: "Bisagras 3\" doradas", quantity: 3, unit: "pza", price: isEconomic ? 850 : 1500 },
+                            { name: "Cerradura interior", quantity: 1, unit: "pza", price: isEconomic ? 8500 : 18000 },
+                            { name: "Manijas puerta", quantity: 1, unit: "kit", price: isEconomic ? 3500 : 7500 },
+                            { name: "Topes puerta", quantity: 2, unit: "pza", price: 450 },
+                            { name: "Clavos acabado", quantity: measure * 50, unit: "pza", price: 25 }
+                        ]
+                    };
+
+                case 'ventana_fija':
+                    return {
+                        labor: [
+                            { description: "Especialista ventanas", workers: 1, hours: measure * 2.0, rate: 1900 },
+                            { description: "Ayudante instalación", workers: 1, hours: measure * 1.5, rate: 1663 },
+                            { description: "Acabados sellado", workers: 1, hours: measure * 1.0, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Marco aluminio fijo", quantity: measure * 4, unit: "m", price: isEconomic ? 3000 : 4500 },
+                            { name: "Vidrio 6mm templado", quantity: measure * 1.1, unit: "m²", price: isEconomic ? 12000 : 18000 },
+                            { name: "Empaques ventana", quantity: measure * 4, unit: "m", price: 350 },
+                            { name: "Silicón estructural", quantity: measure * 0.15, unit: "tubo", price: 3500 },
+                            { name: "Anclajes metálicos", quantity: measure * 8, unit: "pza", price: 180 },
+                            { name: "Sellador exterior", quantity: measure * 0.1, unit: "tubo", price: 2800 }
+                        ]
+                    };
+
+                case 'portones_garage':
+                    return {
+                        labor: [
+                            { description: "Soldador especializado", workers: 1, hours: measure * 2.5, rate: 2000 },
+                            { description: "Ayudante soldadura", workers: 1, hours: measure * 2.0, rate: 1663 },
+                            { description: "Instalación rieles", workers: 1, hours: measure * 1.5, rate: 1900 },
+                            { description: "Ajustes finales", workers: 1, hours: measure * 1.0, rate: 2000 }
+                        ],
+                        materials: [
+                            { name: "Estructura tubular portón", quantity: measure * 8, unit: "m", price: isEconomic ? 2200 : 3200 },
+                            { name: "Lámina galvanizada", quantity: measure * 1.1, unit: "m²", price: isEconomic ? 4500 : 6500 },
+                            { name: "Rieles superiores", quantity: measure * 0.5, unit: "m", price: 3500 },
+                            { name: "Ruedas portón", quantity: 8, unit: "pza", price: 2500 },
+                            { name: "Bisagras reforzadas", quantity: 4, unit: "pza", price: 3500 },
+                            { name: "Cerradura portón", quantity: 1, unit: "pza", price: isEconomic ? 15000 : 35000 },
+                            { name: "Pintura anticorrosiva", quantity: measure * 0.3, unit: "gal", price: 8500 },
+                            { name: "Soldadura y electrodos", quantity: measure * 0.5, unit: "kg", price: 2800 }
+                        ]
+                    };
+
+                // =============== SOLDADURA Y ESTRUCTURAS ===============
+                
+                case 'soldadura_general':
+                    return {
+                        labor: [
+                            { description: "Soldador certificado", workers: 1, hours: measure * 1.5, rate: 2000 },
+                            { description: "Ayudante soldadura", workers: 1, hours: measure * 1.2, rate: 1663 },
+                            { description: "Preparación materiales", workers: 1, hours: measure * 0.8, rate: 1721 }
+                        ],
+                        materials: [
+                            { name: "Electrodos 3/32\"", quantity: measure * 0.8, unit: "kg", price: 2800 },
+                            { name: "Electrodos 1/8\"", quantity: measure * 0.5, unit: "kg", price: 2800 },
+                            { name: "Discos corte metal 4½\"", quantity: measure * 0.3, unit: "pza", price: 850 },
+                            { name: "Discos desbaste 4½\"", quantity: measure * 0.2, unit: "pza", price: 650 },
+                            { name: "Lija metal", quantity: measure * 0.5, unit: "pza", price: 450 },
+                            { name: "Anticorrosivo", quantity: measure * 0.1, unit: "gal", price: 8500 },
+                            { name: "Thinner industrial", quantity: measure * 0.05, unit: "gal", price: 3500 },
+                            { name: "Gases soldadura", quantity: measure * 0.2, unit: "kit", price: 5000 }
+                        ]
+                    };
+
+                case 'estructura_metalica':
+                    return {
+                        labor: [
+                            { description: "Soldador estructural", workers: 1, hours: measure * 3.0, rate: 2200 },
+                            { description: "Ayudante soldadura", workers: 1, hours: measure * 2.5, rate: 1663 },
+                            { description: "Montaje estructura", workers: 2, hours: measure * 2.0, rate: 1900 },
+                            { description: "Acabados protección", workers: 1, hours: measure * 1.0, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Tubo estructural cuadrado 4\"×4\" cal.18 (6 m)", quantity: measure * 0.8, unit: "pza", price: 23500 },
+                            { name: "Tubo estructural cuadrado 3\"×3\" cal.18 (6 m)", quantity: measure * 0.6, unit: "pza", price: 17250 },
+                            { name: "Angular 2\"×2\" cal.18 (6 m)", quantity: measure * 0.4, unit: "pza", price: 8500 },
+                            { name: "Platina 3\"×¼\" (6 m)", quantity: measure * 0.2, unit: "pza", price: 6500 },
+                            { name: "Pernos estructurales ½\"×4\"", quantity: measure * 8, unit: "pza", price: 450 },
+                            { name: "Soldadura estructural", quantity: measure * 1.2, unit: "kg", price: 3200 },
+                            { name: "Pintura estructural", quantity: measure * 0.4, unit: "gal", price: 12000 },
+                            { name: "Anclajes químicos", quantity: measure * 4, unit: "pza", price: 2500 }
+                        ]
+                    };
+
+                // =============== REMODELACIONES ===============
+                
+                case 'remodelacion_banos':
+                    return {
+                        labor: [
+                            { description: "Maestro remodelación", workers: 1, hours: measure * 8.0, rate: 1900 },
+                            { description: "Plomero", workers: 1, hours: measure * 4.0, rate: 2000 },
+                            { description: "Electricista", workers: 1, hours: measure * 2.0, rate: 2000 },
+                            { description: "Ceramista", workers: 1, hours: measure * 6.0, rate: 1800 },
+                            { description: "Ayudante general", workers: 1, hours: measure * 8.0, rate: 1663 }
+                        ],
+                        materials: [
+                            { name: "Inodoro dos piezas blanco", quantity: 1, unit: "pza", price: isEconomic ? 47950 : 95000 },
+                            { name: "Lavamanos pedestal", quantity: 1, unit: "pza", price: isEconomic ? 19900 : 50000 },
+                            { name: "Grifería lavamanos", quantity: 1, unit: "pza", price: isEconomic ? 20000 : 45000 },
+                            { name: "Grifería ducha", quantity: 1, unit: "pza", price: isEconomic ? 20000 : 70000 },
+                            { name: "Azulejo pared baño (caja)", quantity: measure * 2.5, unit: "caja", price: isEconomic ? 6000 : 12500 },
+                            { name: "Piso antideslizante baño", quantity: measure * 1.1, unit: "m²", price: isEconomic ? 4500 : 8500 },
+                            { name: "Accesorios baño kit 4 piezas", quantity: 1, unit: "kit", price: isEconomic ? 25500 : 45000 },
+                            { name: "Pegamento cerámica", quantity: measure * 0.1, unit: "saco", price: 2800 },
+                            { name: "Lechada resistente humedad", quantity: measure * 1, unit: "kg", price: 1500 },
+                            { name: "Impermeabilizante baño", quantity: measure * 0.5, unit: "gal", price: 15000 }
+                        ]
+                    };
+
+                case 'mueble_fregadero':
+                    return {
+                        labor: [
+                            { description: "Ebanista especializado", workers: 1, hours: measure * 6.0, rate: 2000 },
+                            { description: "Ayudante carpintería", workers: 1, hours: measure * 5.0, rate: 1663 },
+                            { description: "Instalador", workers: 1, hours: measure * 2.0, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Mueble bajo cocina MDF", quantity: measure * 1, unit: "m", price: isEconomic ? 70000 : 150000 },
+                            { name: "Fregadero acero sencillo", quantity: 1, unit: "pza", price: isEconomic ? 21900 : 85000 },
+                            { name: "Grifería cocina", quantity: 1, unit: "pza", price: isEconomic ? 35000 : 150000 },
+                            { name: "Tablero superior", quantity: measure * 0.6, unit: "m²", price: isEconomic ? 25000 : 45000 },
+                            { name: "Bisagras mueble", quantity: measure * 6, unit: "pza", price: 1200 },
+                            { name: "Correderas cajón", quantity: measure * 2, unit: "pza", price: 3500 },
+                            { name: "Manijas mueble", quantity: measure * 4, unit: "pza", price: 850 },
+                            { name: "Sellador madera", quantity: measure * 0.2, unit: "gal", price: 8500 },
+                            { name: "Tornillería mueble", quantity: measure * 1, unit: "kit", price: 2500 }
+                        ]
+                    };
+
+                case 'modificacion_gradas':
+                    return {
+                        labor: [
+                            { description: "Maestro de obra", workers: 1, hours: measure * 2.5, rate: 1900 },
+                            { description: "Albañil", workers: 1, hours: measure * 2.0, rate: 1721 },
+                            { description: "Ayudante", workers: 1, hours: measure * 1.8, rate: 1663 },
+                            { description: "Acabados", workers: 1, hours: measure * 1.0, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Concreto premezclado", quantity: measure * 0.15, unit: "m³", price: 85000 },
+                            { name: "Varilla corrugada #3", quantity: measure * 1.5, unit: "pza", price: 1530 },
+                            { name: "Varilla corrugada #4", quantity: measure * 0.8, unit: "pza", price: 2900 },
+                            { name: "Alambre amarre", quantity: measure * 0.3, unit: "kg", price: 600 },
+                            { name: "Formaleta madera", quantity: measure * 1.5, unit: "m²", price: 2500 },
+                            { name: "Clavos formaleta", quantity: measure * 0.2, unit: "kg", price: 800 },
+                            { name: "Antideslizante escalones", quantity: measure * 1, unit: "m", price: 1200 },
+                            { name: "Sellador concreto", quantity: measure * 0.1, unit: "gal", price: 8500 }
+                        ]
+                    };
+
+                case 'acera_concreto':
+                    return {
+                        labor: [
+                            { description: "Maestro de obra", workers: 1, hours: measure * 1.2, rate: 1800 },
+                            { description: "Albañiles", workers: 2, hours: measure * 1.0, rate: 1721 },
+                            { description: "Ayudantes", workers: 2, hours: measure * 0.8, rate: 1663 },
+                            { description: "Acabado superficie", workers: 1, hours: measure * 0.5, rate: 1800 }
+                        ],
+                        materials: [
+                            { name: "Concreto premezclado 3000 PSI", quantity: measure * 0.1, unit: "m³", price: 85000 },
+                            { name: "Malla electrosoldada", quantity: measure * 1.1, unit: "m²", price: 1800 },
+                            { name: "Material base (lastre)", quantity: measure * 0.05, unit: "m³", price: 15000 },
+                            { name: "Juntas dilatación", quantity: measure * 0.2, unit: "m", price: 450 },
+                            { name: "Sellador juntas", quantity: measure * 0.05, unit: "tubo", price: 2500 },
+                            { name: "Aditivo impermeabilizante", quantity: measure * 0.02, unit: "kg", price: 2800 },
+                            { name: "Curador concreto", quantity: measure * 0.2, unit: "gal", price: 6500 },
+                            { name: "Bordillo prefabricado", quantity: measure * 0.3, unit: "m", price: 2200 }
+                        ]
+                    };
+
+                // =============== DEFAULT CASE ===============
+                
+                default:
+                    return {
+                        labor: [
+                            { description: "Operario general", workers: 1, hours: measure * 1.0, rate: 1721 },
+                            { description: "Ayudante", workers: 1, hours: measure * 0.8, rate: 1663 }
+                        ],
+                        materials: [
+                            { name: "Material específico según trabajo", quantity: measure * 1.0, unit: "servicio", price: 5000 }
+                        ]
+                    };
+            }
+        }
+
+        function generateBudget() {
+            const workType = document.getElementById('workType').value;
+            const qualityLevel = document.getElementById('qualityLevel').value;
+            const measure = parseFloat(document.getElementById('workMeasure').value) || 0;
+            
+            if (!workType || !workTypes[workType]) {
+                alert('Por favor selecciona un tipo de trabajo válido.');
+                return;
+            }
+            
+            if (measure <= 0) {
+                alert('Por favor ingresa una medida válida.');
+                return;
+            }
+            
+            const isEconomic = qualityLevel === 'economico';
+            const work = workTypes[workType];
+            let budget = generateWorkBudget(workType, measure, isEconomic);
+            
+            laborItems = [];
+            materialItems = [];
+            
+            budget.labor.forEach(item => {
+                laborItems.push({
+                    description: item.description,
+                    workers: item.workers,
+                    hours: item.hours,
+                    rate: item.rate,
+                    subtotal: item.workers * item.hours * item.rate
+                });
+            });
+            
+            budget.materials.forEach(item => {
+                materialItems.push({
+                    name: item.name,
+                    quantity: Number(item.quantity.toFixed(2)),
+                    unit: item.unit,
+                    price: item.price,
+                    subtotal: item.quantity * item.price
+                });
+            });
+            
+            updateLaborTable();
+            updateMaterialTable();
+            calculateTotals();
+            
+            alert(`¡Presupuesto generado con precios actualizados 2025!\nTipo: ${work.name}\nCalidad: ${isEconomic ? 'Económico' : 'Premium'}\nCantidad: ${measure} m²`);
+        }
+
+        function addToBudget() {
+            const workType = document.getElementById('workType').value;
+            const qualityLevel = document.getElementById('qualityLevel').value;
+            const measure = parseFloat(document.getElementById('workMeasure').value) || 0;
+            
+            if (!workType || !workTypes[workType]) {
+                alert('Por favor selecciona un tipo de trabajo válido.');
+                return;
+            }
+            
+            if (measure <= 0) {
+                alert('Por favor ingresa una medida válida.');
+                return;
+            }
+            
+            const isEconomic = qualityLevel === 'economico';
+            const work = workTypes[workType];
+            let budget = generateWorkBudget(workType, measure, isEconomic);
+            
+            budget.labor.forEach(item => {
+                laborItems.push({
+                    description: item.description,
+                    workers: item.workers,
+                    hours: item.hours,
+                    rate: item.rate,
+                    subtotal: item.workers * item.hours * item.rate
+                });
+            });
+            
+            budget.materials.forEach(item => {
+                materialItems.push({
+                    name: item.name,
+                    quantity: Number(item.quantity.toFixed(2)),
+                    unit: item.unit,
+                    price: item.price,
+                    subtotal: item.quantity * item.price
+                });
+            });
+            
+            updateLaborTable();
+            updateMaterialTable();
+            calculateTotals();
+            
+            alert(`¡${work.name} agregado al presupuesto!\nCalidad: ${isEconomic ? 'Económico' : 'Premium'}\nCantidad: ${measure} m²`);
+        }
+
+        function addLabor() {
+            const desc = document.getElementById('laborDesc').value;
+            const workers = parseFloat(document.getElementById('laborWorkers').value) || 0;
+            const hours = parseFloat(document.getElementById('laborHours').value) || 0;
+            const rate = parseFloat(document.getElementById('laborRate').value) || 0;
+
+            if (!desc || workers <= 0 || hours <= 0 || rate <= 0) {
+                alert('Por favor completa todos los campos de mano de obra.');
+                return;
+            }
+
+            laborItems.push({
+                description: desc,
+                workers: workers,
+                hours: hours,
+                rate: rate,
+                subtotal: workers * hours * rate
+            });
+
+            updateLaborTable();
+            clearLaborInputs();
+            calculateTotals();
+        }
+
+        function addMaterial() {
+            const name = document.getElementById('materialName').value;
+            const quantity = parseFloat(document.getElementById('materialQuantity').value) || 0;
+            const unit = document.getElementById('materialUnit').value;
+            const price = parseFloat(document.getElementById('materialPrice').value) || 0;
+
+            if (!name || quantity <= 0 || price <= 0) {
+                alert('Por favor completa todos los campos de materiales.');
+                return;
+            }
+
+            materialItems.push({
+                name: name,
+                quantity: quantity,
+                unit: unit,
+                price: price,
+                subtotal: quantity * price
+            });
+
+            updateMaterialTable();
+            clearMaterialInputs();
+            calculateTotals();
+        }
+
+        function updateLaborTable() {
+            const tbody = document.getElementById('laborTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            laborItems.forEach((item, index) => {
+                const totalHours = item.workers * item.hours;
+                const workDays = (totalHours / 8).toFixed(1);
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${item.description}</td>
+                    <td>${item.workers}</td>
+                    <td>${item.hours.toFixed(1)}</td>
+                    <td class="commercial-units">${workDays} días</td>
+                    <td>₡${item.rate.toLocaleString('es-CR')}</td>
+                    <td>${formatMoney(item.subtotal)}</td>
+                    <td><button class="btn btn-remove" onclick="removeLabor(${index})">✖</button></td>
+                `;
+            });
+        }
+
+        function updateMaterialTable() {
+            const tbody = document.getElementById('materialTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            materialItems.forEach((item, index) => {
+                const commercialUnits = calculateCommercialUnits(item.name, item.quantity, item.unit);
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.quantity.toFixed(2)}</td>
+                    <td>${item.unit}</td>
+                    <td class="commercial-units">${commercialUnits}</td>
+                    <td>₡${item.price.toLocaleString('es-CR')}</td>
+                    <td>${formatMoney(item.subtotal)}</td>
+                    <td><button class="btn btn-remove" onclick="removeMaterial(${index})">✖</button></td>
+                `;
+            });
+        }
+
+        function removeLabor(index) {
+            laborItems.splice(index, 1);
+            updateLaborTable();
+            calculateTotals();
+        }
+
+        function removeMaterial(index) {
+            materialItems.splice(index, 1);
+            updateMaterialTable();
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            const totalLabor = laborItems.reduce((sum, item) => sum + item.subtotal, 0);
+            const totalMaterials = materialItems.reduce((sum, item) => sum + item.subtotal, 0);
+            const subtotal = totalLabor + totalMaterials;
+            
+            const transportPercent = parseFloat(document.getElementById('transportPercent').value) || 0;
+            const contingencyPercent = parseFloat(document.getElementById('contingencyPercent').value) || 0;
+            const profitPercent = parseFloat(document.getElementById('profitPercent').value) || 0;
+            
+            const transportCost = subtotal * (transportPercent / 100);
+            const contingencyCost = subtotal * (contingencyPercent / 100);
+            const profitCost = subtotal * (profitPercent / 100);
+            const grandTotal = subtotal + transportCost + contingencyCost + profitCost;
+
+            document.getElementById('totalLabor').textContent = formatMoney(totalLabor);
+            document.getElementById('totalMaterials').textContent = formatMoney(totalMaterials);
+            document.getElementById('subtotal').textContent = formatMoney(subtotal);
+            document.getElementById('transportCost').textContent = formatMoney(transportCost);
+            document.getElementById('contingencyCost').textContent = formatMoney(contingencyCost);
+            document.getElementById('profitCost').textContent = formatMoney(profitCost);
+            document.getElementById('grandTotal').textContent = formatMoney(grandTotal);
+        }
+
+        function clearLaborInputs() {
+            document.getElementById('laborDesc').value = '';
+            document.getElementById('laborWorkers').value = '';
+            document.getElementById('laborHours').value = '';
+            document.getElementById('laborRate').value = '';
+        }
+
+        function clearMaterialInputs() {
+            document.getElementById('materialName').value = '';
+            document.getElementById('materialQuantity').value = '';
+            document.getElementById('materialPrice').value = '';
+        }
+
+        function clearAll() {
+            if (confirm('¿Estás seguro de que quieres limpiar todos los datos? Esta acción no se puede deshacer.')) {
+                laborItems = [];
+                materialItems = [];
+                updateLaborTable();
+                updateMaterialTable();
+                
+                document.getElementById('projectName').value = '';
+                document.getElementById('clientName').value = '';
+                document.getElementById('projectDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('projectDescription').value = '';
+                document.getElementById('workType').value = '';
+                document.getElementById('qualityLevel').value = 'economico';
+                document.getElementById('measureFields').style.display = 'none';
+                
+                clearLaborInputs();
+                clearMaterialInputs();
+                
+                document.getElementById('transportPercent').value = '';
+                document.getElementById('contingencyPercent').value = '';
+                document.getElementById('profitPercent').value = '';
+                
+                calculateTotals();
+                alert('Todos los datos han sido limpiados correctamente.');
+            }
+        }
+
+        function printQuote() {
+            if (laborItems.length === 0 && materialItems.length === 0) {
+                alert('No hay datos para imprimir. Agrega mano de obra o materiales primero.');
+                return;
+            }
+
+            const projectName = document.getElementById('projectName').value || 'Proyecto Sin Nombre';
+            const clientName = document.getElementById('clientName').value || 'Cliente';
+            const projectDate = document.getElementById('projectDate').value || new Date().toISOString().split('T')[0];
+            const projectDescription = document.getElementById('projectDescription').value || 'Sin descripción';
+
+            const totalLabor = laborItems.reduce((sum, item) => sum + item.subtotal, 0);
+            const totalMaterials = materialItems.reduce((sum, item) => sum + item.subtotal, 0);
+            const subtotal = totalLabor + totalMaterials;
+            
+            const transportPercent = parseFloat(document.getElementById('transportPercent').value) || 0;
+            const contingencyPercent = parseFloat(document.getElementById('contingencyPercent').value) || 0;
+            const profitPercent = parseFloat(document.getElementById('profitPercent').value) || 0;
+            
+            const transportCost = subtotal * (transportPercent / 100);
+            const contingencyCost = subtotal * (contingencyPercent / 100);
+            const profitCost = subtotal * (profitPercent / 100);
+            const grandTotal = subtotal + transportCost + contingencyCost + profitCost;
+
+            function formatMoneyForPrint(amount) {
+                return '₡' + Math.round(amount).toLocaleString('es-CR');
+            }
+
+            const printContent = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cotización - ${projectName}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+        .header { text-align: center; border-bottom: 3px solid #3498db; padding-bottom: 15px; margin-bottom: 25px; }
+        .header h1 { color: #2c3e50; font-size: 2em; margin-bottom: 5px; }
+        .project-info { background: #f8f9fa; padding: 20px; margin-bottom: 25px; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        th { background: #34495e; color: white; padding: 12px 8px; text-align: left; }
+        td { padding: 10px 8px; border-bottom: 1px solid #ddd; }
+        .summary { background: #e8f4f8; padding: 20px; border-radius: 8px; }
+        .total-line { font-size: 1.3em; font-weight: bold; border-top: 2px solid #3498db; padding-top: 10px; margin-top: 10px; }
+        .commercial-units { font-size: 0.85em; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>COTIZACIÓN DE PROYECTO - PRECIOS 2025</h1>
+        <p>Fecha: ${projectDate}</p>
+    </div>
+    <div class="project-info">
+        <h3>Información del Proyecto</h3>
+        <p><strong>Proyecto:</strong> ${projectName}</p>
+        <p><strong>Cliente:</strong> ${clientName}</p>
+        <p><strong>Descripción:</strong> ${projectDescription}</p>
+    </div>
+    ${laborItems.length > 0 ? `
+    <h2>Mano de Obra</h2>
+    <table>
+        <thead>
+            <tr><th>Descripción</th><th>Trabajadores</th><th>Horas</th><th>Días de Trabajo</th><th>Tarifa/Hora</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+            ${laborItems.map(item => {
+                const totalHours = item.workers * item.hours;
+                const workDays = (totalHours / 8).toFixed(1);
+                return `<tr>
+                    <td>${item.description}</td>
+                    <td>${item.workers}</td>
+                    <td>${item.hours.toFixed(1)}</td>
+                    <td class="commercial-units">${workDays} días</td>
+                    <td>${formatMoneyForPrint(item.rate)}</td>
+                    <td>${formatMoneyForPrint(item.subtotal)}</td>
+                </tr>`;
+            }).join('')}
+        </tbody>
+    </table>
+    ` : ''}
+    ${materialItems.length > 0 ? `
+    <h2>Materiales</h2>
+    <table>
+        <thead>
+            <tr><th>Material</th><th>Cantidad</th><th>Unidad</th><th>Unidades Comerciales</th><th>Precio Unit.</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+            ${materialItems.map(item => {
+                const commercialUnits = calculateCommercialUnits(item.name, item.quantity, item.unit);
+                return `<tr>
+                    <td>${item.name}</td>
+                    <td>${item.quantity.toFixed(2)}</td>
+                    <td>${item.unit}</td>
+                    <td class="commercial-units">${commercialUnits}</td>
+                    <td>${formatMoneyForPrint(item.price)}</td>
+                    <td>${formatMoneyForPrint(item.subtotal)}</td>
+                </tr>`;
+            }).join('')}
+        </tbody>
+    </table>
+    ` : ''}
+    <div class="summary">
+        <h3>Resumen de Costos</h3>
+        <p><strong>Mano de Obra:</strong> ${formatMoneyForPrint(totalLabor)}</p>
+        <p><strong>Materiales:</strong> ${formatMoneyForPrint(totalMaterials)}</p>
+        <p><strong>Subtotal:</strong> ${formatMoneyForPrint(subtotal)}</p>
+        ${transportPercent > 0 ? `<p><strong>Transporte (${transportPercent}%):</strong> ${formatMoneyForPrint(transportCost)}</p>` : ''}
+        ${contingencyPercent > 0 ? `<p><strong>Imprevistos (${contingencyPercent}%):</strong> ${formatMoneyForPrint(contingencyCost)}</p>` : ''}
+        ${profitPercent > 0 ? `<p><strong>Ganancia (${profitPercent}%):</strong> ${formatMoneyForPrint(profitCost)}</p>` : ''}
+        <p class="total-line"><strong>TOTAL FINAL: ${formatMoneyForPrint(grandTotal)}</strong></p>
+    </div>
+</body>
+</html>`;
+
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            if (printWindow) {
+                printWindow.document.open();
+                printWindow.document.write(printContent);
+                printWindow.document.close();
+                printWindow.focus();
+                setTimeout(() => {
+                    printWindow.print();
+                }, 500);
+            } else {
+                alert('No se pudo abrir la ventana de impresión. Por favor, permite ventanas emergentes para este sitio.');
+            }
+        }
+
+        function saveToGoogleSheets() {
+            alert('Esta función requiere configuración de Google Apps Script. Consulta la documentación para más información.');
+        }
+
+        // Inicializar cuando la página carga
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('projectDate').value = new Date().toISOString().split('T')[0];
+            console.log('Calculadora inicializada correctamente - Versión 2025 con precios actualizados');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBM - Sistema de Reportes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 30px 20px; text-align: center; }
+        .logo { font-size: 2.5em; font-weight: bold; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1em; opacity: 0.9; font-weight: 300; }
+        .form-grid { padding: 30px 20px; display: grid; gap: 15px; }
+        .form-button { display: flex; align-items: center; background: white; border: 2px solid #e0e0e0; border-radius: 15px; padding: 20px; text-decoration: none; color: #2c3e50; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .form-button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-color: #667eea; }
+        .form-button:active { transform: translateY(0); }
+        .icon { font-size: 2.5em; margin-right: 15px; width: 60px; text-align: center; }
+        .form-info { flex: 1; }
+        .form-title { font-size: 1.2em; font-weight: bold; margin-bottom: 5px; color: #2c3e50; }
+        .form-desc { font-size: 0.9em; color: #7f8c8d; }
+        .arrow { font-size: 1.5em; color: #bdc3c7; }
+        .footer { text-align: center; padding: 20px; background: #f8f9fa; color: #6c757d; font-size: 0.9em; }
+        .timestamp { margin-top: 10px; font-size: 0.8em; opacity: 0.7; }
+        .permiso { border-left: 5px solid #3498db; }
+        .incapacidad { border-left: 5px solid #e74c3c; }
+        .vacaciones { border-left: 5px solid #f39c12; }
+        .horas { border-left: 5px solid #9b59b6; }
+        .horas-multiple { border-left: 5px solid #8e44ad; }
+        .ausencias { border-left: 5px solid #e67e22; }
+        .tardias { border-left: 5px solid #1abc9c; }
+        .vacante { border-left: 5px solid #16a085; }
+        @media (max-width: 480px) {
+            .container { margin: 10px; border-radius: 15px; }
+            .header { padding: 20px 15px; }
+            .logo { font-size: 2em; }
+            .form-grid { padding: 20px 15px; gap: 12px; }
+            .form-button { padding: 15px; }
+            .icon { font-size: 2em; width: 50px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏢 SBM</div>
+            <div class="subtitle">Sistema de Reportes Digital</div>
+        </div>
+        <div class="form-grid">
+            <a href="https://forms.gle/8dksLpju8Aaaj2nL9" class="form-button permiso">
+                <div class="icon">📝</div>
+                <div class="form-info">
+                    <div class="form-title">Permiso Personal</div>
+                    <div class="form-desc">Reunión escolar, cita médica, trámites</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            <a href="https://forms.gle/6XvuejFZdUcq1dni6" class="form-button incapacidad">
+                <div class="icon">🏥</div>
+                <div class="form-info">
+                    <div class="form-title">Incapacidad Médica</div>
+                    <div class="form-desc">CCSS, INS, certificados médicos</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            <a href="https://forms.gle/rbSWbDa8jQp4TcnY9" class="form-button vacaciones">
+                <div class="icon">🏖️</div>
+                <div class="form-info">
+                    <div class="form-title">Vacaciones</div>
+                    <div class="form-desc">Anuales, parciales, planificación</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            <a href="https://forms.gle/97ZHSrr6XncpbAEj7" class="form-button horas">
+                <div class="icon">⏰</div>
+                <div class="form-info">
+                    <div class="form-title">Horas Extras</div>
+                    <div class="form-desc">Ordinarias, 1.5x, dobles</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            <a href="https://forms.gle/4HnYtigoBbtt7fTw6" class="form-button horas-multiple">
+                <div class="icon">👥</div>
+                <div class="form-info">
+                    <div class="form-title">Horas Extras Múltiple</div>
+                    <div class="form-desc">Feriados, limpiezas, varios empleados</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            <a href="https://forms.gle/HKpPkMngLL6jsXYH9" class="form-button ausencias">
+                <div class="icon">⚠️</div>
+                <div class="form-info">
+                    <div class="form-title">Ausencias</div>
+                    <div class="form-desc">Justificadas, injustificadas, duelo</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            <a href="https://forms.gle/RJHHyCdcjvs16xy9A" class="form-button tardias">
+                <div class="icon">🕐</div>
+                <div class="form-info">
+                    <div class="form-title">Llegadas Tardías</div>
+                    <div class="form-desc">Control de puntualidad, justificaciones</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            <a href="https://forms.gle/6xSCZBq5o5A2YsYC6" class="form-button vacante">
+                <div class="icon">👤</div>
+                <div class="form-info">
+                    <div class="form-title">Reportar Vacante</div>
+                    <div class="form-desc">Posiciones disponibles, cubrir turnos</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+        </div>
+        <div class="footer">
+            <strong>SBM Corp</strong> - Sistema Digital de Recursos Humanos
+            <div class="timestamp">
+                Implementado: <script>document.write(new Date().toLocaleDateString('es-CR'));</script>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.form-button').forEach(button => {
+            button.addEventListener('touchstart', function() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

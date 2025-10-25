@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Presupuesto - Clasificador Automático</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const BudgetClassifier = () => {
+            const [data, setData] = useState([]);
+            const [summary, setSummary] = useState(null);
+
+            const categorizeItem = (descripcion) => {
+                const desc = descripcion?.toLowerCase() || '';
+                
+                if (desc.includes('guante') || desc.includes('lente') || desc.includes('tapón') || 
+                    desc.includes('tapon') || desc.includes('protec') || desc.includes('seguridad')) {
+                    return 'EPP';
+                }
+                
+                if (desc.includes('pantalon') || desc.includes('camisa') || desc.includes('polo') || 
+                    desc.includes('uniforme') || desc.includes('camiseta')) {
+                    return 'Uniforme';
+                }
+                
+                if (desc.includes('clean') || desc.includes('jabon') || desc.includes('cleaner') || 
+                    desc.includes('peroxy') || desc.includes('nabc') || desc.includes('desinfectante')) {
+                    return 'Químico';
+                }
+                
+                return 'Suministro';
+            };
+
+            const processData = (text) => {
+                const lines = text.trim().split('\n');
+                const headers = lines[0].split('\t');
+                
+                const processed = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split('\t');
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.trim()] = values[index]?.trim() || '';
+                    });
+                    
+                    const categoria = categorizeItem(row['Descripción']);
+                    const importe = parseFloat(row['Importe Total Local']) || 0;
+                    
+                    processed.push({
+                        orden: row['Orden Compra'],
+                        descripcion: row['Descripción'],
+                        proveedor: row['Nombre Proveedor'],
+                        importe: importe,
+                        categoria: categoria
+                    });
+                }
+                
+                setData(processed);
+                calculateSummary(processed);
+            };
+
+            const calculateSummary = (items) => {
+                const totals = {
+                    'Químico': 0,
+                    'EPP': 0,
+                    'Uniforme': 0,
+                    'Suministro': 0
+                };
+                
+                items.forEach(item => {
+                    totals[item.categoria] += item.importe;
+                });
+                
+                const total = Object.values(totals).reduce((sum, val) => sum + val, 0);
+                
+                setSummary({
+                    totals,
+                    total,
+                    percentages: {
+                        'Químico': (totals['Químico'] / total * 100).toFixed(1),
+                        'EPP': (totals['EPP'] / total * 100).toFixed(1),
+                        'Uniforme': (totals['Uniforme'] / total * 100).toFixed(1),
+                        'Suministro': (totals['Suministro'] / total * 100).toFixed(1)
+                    }
+                });
+            };
+
+            const handlePaste = (e) => {
+                const text = e.clipboardData.getData('text');
+                processData(text);
+            };
+
+            const exportToCSV = () => {
+                if (data.length === 0) return;
+                
+                let csv = 'Orden Compra,Descripción,Proveedor,Importe,Categoría\n';
+                data.forEach(row => {
+                    csv += `${row.orden},"${row.descripcion}",${row.proveedor},${row.importe},${row.categoria}\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'gastos_categorizados.csv';
+                a.click();
+            };
+
+            const exportToHTML = () => {
+                if (data.length === 0) return;
+                
+                const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Gastos - ${new Date().toLocaleDateString('es-CR')}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        h1 { color: #1e40af; border-bottom: 3px solid #1e40af; padding-bottom: 10px; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 30px 0; }
+        .card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; }
+        .card.total { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .card-title { font-size: 14px; opacity: 0.9; }
+        .card-value { font-size: 28px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #1e40af; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+        tr:hover { background: #f9fafb; }
+        .badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .badge-quimico { background: #f3e8ff; color: #7c3aed; }
+        .badge-epp { background: #fef3c7; color: #d97706; }
+        .badge-uniforme { background: #dbeafe; color: #2563eb; }
+        .badge-suministro { background: #f3f4f6; color: #4b5563; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Reporte de Control de Presupuesto</h1>
+        <p><strong>Fecha:</strong> ${new Date().toLocaleString('es-CR')}</p>
+        <div class="summary">
+            <div class="card"><div class="card-title">Químicos</div><div class="card-value">₡${summary.totals['Químico'].toLocaleString('es-CR')}</div></div>
+            <div class="card"><div class="card-title">EPP</div><div class="card-value">₡${summary.totals['EPP'].toLocaleString('es-CR')}</div></div>
+            <div class="card"><div class="card-title">Uniformes</div><div class="card-value">₡${summary.totals['Uniforme'].toLocaleString('es-CR')}</div></div>
+            <div class="card"><div class="card-title">Suministros</div><div class="card-value">₡${summary.totals['Suministro'].toLocaleString('es-CR')}</div></div>
+            <div class="card total"><div class="card-title">TOTAL</div><div class="card-value">₡${summary.total.toLocaleString('es-CR')}</div></div>
+        </div>
+        <table>
+            <thead><tr><th>Orden</th><th>Descripción</th><th>Proveedor</th><th>Importe</th><th>Categoría</th></tr></thead>
+            <tbody>
+                ${data.map(row => `<tr><td>${row.orden}</td><td>${row.descripcion}</td><td>${row.proveedor}</td><td>₡${row.importe.toLocaleString('es-CR')}</td><td><span class="badge badge-${row.categoria.toLowerCase()}">${row.categoria}</span></td></tr>`).join('')}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>`;
+                
+                const blob = new Blob([html], { type: 'text/html' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `reporte_gastos_${new Date().toISOString().split('T')[0]}.html`;
+                a.click();
+            };
+
+            const clearData = () => {
+                setData([]);
+                setSummary(null);
+            };
+
+            const updateCategory = (index, newCategory) => {
+                const updatedData = [...data];
+                updatedData[index].categoria = newCategory;
+                setData(updatedData);
+                calculateSummary(updatedData);
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                            <h1 className="text-3xl font-bold text-gray-800 mb-2">Control de Presupuesto - Clasificador Automático</h1>
+                            <p className="text-gray-600">Pega los datos de Exactus y obtén la clasificación automática</p>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                            <h2 className="text-xl font-semibold text-gray-800 mb-4">📋 Pegar Datos</h2>
+                            <textarea
+                                className="w-full h-32 p-4 border-2 border-dashed border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                                placeholder="Pega aquí los datos de Exactus (incluye encabezados)..."
+                                onPaste={handlePaste}
+                            />
+                            <p className="text-sm text-gray-500 mt-2">💡 Copia desde Excel y pega con Ctrl+V</p>
+                        </div>
+
+                        {summary && (
+                            <>
+                                <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                                    <h2 className="text-xl font-semibold text-gray-800 mb-4">💰 Resumen de Gastos</h2>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                                        {Object.keys(summary.totals).map(cat => (
+                                            <div key={cat} className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border-l-4 border-blue-600">
+                                                <div className="text-sm font-medium text-gray-600">{cat}</div>
+                                                <div className="text-2xl font-bold text-gray-800">₡{summary.totals[cat].toLocaleString('es-CR')}</div>
+                                                <div className="text-sm text-gray-500">{summary.percentages[cat]}%</div>
+                                            </div>
+                                        ))}
+                                        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border-l-4 border-green-600">
+                                            <div className="text-sm font-medium text-gray-600">Total</div>
+                                            <div className="text-2xl font-bold text-gray-800">₡{summary.total.toLocaleString('es-CR')}</div>
+                                            <div className="text-sm text-gray-500">{data.length} items</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <button onClick={exportToCSV} className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">📥 CSV</button>
+                                        <button onClick={exportToHTML} className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">📄 HTML</button>
+                                        <button onClick={clearData} className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700">🗑️ Limpiar</button>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Detalle ({data.length} items)</h3>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th className="px-4 py-3 text-left">Orden</th>
+                                                    <th className="px-4 py-3 text-left">Descripción</th>
+                                                    <th className="px-4 py-3 text-left">Proveedor</th>
+                                                    <th className="px-4 py-3 text-right">Importe</th>
+                                                    <th className="px-4 py-3 text-center">Categoría</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200">
+                                                {data.map((row, idx) => (
+                                                    <tr key={idx} className="hover:bg-gray-50">
+                                                        <td className="px-4 py-3">{row.orden}</td>
+                                                        <td className="px-4 py-3">{row.descripcion}</td>
+                                                        <td className="px-4 py-3">{row.proveedor}</td>
+                                                        <td className="px-4 py-3 text-right">₡{row.importe.toLocaleString('es-CR')}</td>
+                                                        <td className="px-4 py-3 text-center">
+                                                            <select
+                                                                value={row.categoria}
+                                                                onChange={(e) => updateCategory(idx, e.target.value)}
+                                                                className={`px-3 py-1 rounded-full text-xs font-medium border-0 cursor-pointer ${
+                                                                    row.categoria === 'Químico' ? 'bg-purple-100 text-purple-800' :
+                                                                    row.categoria === 'EPP' ? 'bg-yellow-100 text-yellow-800' :
+                                                                    row.categoria === 'Uniforme' ? 'bg-blue-100 text-blue-800' :
+                                                                    'bg-gray-100 text-gray-800'
+                                                                }`}
+                                                            >
+                                                                <option value="Químico">Químico</option>
+                                                                <option value="EPP">EPP</option>
+                                                                <option value="Uniforme">Uniforme</option>
+                                                                <option value="Suministro">Suministro</option>
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<BudgetClassifier />, document.getElementById('root'));
+    </script>
+</body>
+</html>
